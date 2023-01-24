@@ -2,7 +2,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.utils.dates import days_ago
 from datetime import datetime, timedelta
-from task_function_dependencies import load_city_temperature, load_country_temperature, load_global_temperature
+# from task_function_dependencies import load_city_temperature, load_country_temperature, load_global_temperature
 from Airflow_Custom_Operators import IncrementalLoadOperator
 
 default_args = {
@@ -22,6 +22,7 @@ dag = DAG(
     default_args=default_args
 )
 
+"""
 # This is a simple way to do so
 country_load_task = PythonOperator(
     task_id = "country_data_load_task",
@@ -38,6 +39,7 @@ global_load_task = PythonOperator(
     dag=dag,
     python_callable= load_global_temperature
 )
+"""
 
 # This is a more complicated way to do so
 complex_city_tab1_load_task = IncrementalLoadOperator(
@@ -47,7 +49,7 @@ complex_city_tab1_load_task = IncrementalLoadOperator(
     s3_con_id="S3_Con",
     table="city_table",
     s3_bucket= "temperature-project-bucket",
-    s3_prefix= "/db_temperature_by_city"
+    s3_prefix= "db_temperature_by_city"
 )
 
 complex_city_tab2_load_task = IncrementalLoadOperator(
@@ -57,7 +59,7 @@ complex_city_tab2_load_task = IncrementalLoadOperator(
     s3_con_id="S3_Con",
     table="temperature_table",
     s3_bucket= "temperature-project-bucket",
-    s3_prefix= "/db_temperature_by_city"
+    s3_prefix= "db_temperature_by_city"
 )
 
 complex_country_load_task = IncrementalLoadOperator(
@@ -67,7 +69,7 @@ complex_country_load_task = IncrementalLoadOperator(
     s3_con_id="S3_Con",
     table="temperature_country_table",
     s3_bucket= "temperature-project-bucket",
-    s3_prefix= "/db_temperature_by_country"
+    s3_prefix= "db_temperature_by_country"
 )
 
 complex_global_load_task = IncrementalLoadOperator(
@@ -77,5 +79,5 @@ complex_global_load_task = IncrementalLoadOperator(
     s3_con_id="S3_Con",
     table="global_temperature_table",
     s3_bucket= "temperature-project-bucket",
-    s3_prefix= "/db_temperature_global"
+    s3_prefix= "db_temperature_global"
 )
