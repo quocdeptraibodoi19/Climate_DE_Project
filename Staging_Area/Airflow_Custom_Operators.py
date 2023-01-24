@@ -52,18 +52,24 @@ class IncrementalLoadOperator(BaseOperator):
             if self.table == 'global_temperature_table':
                 query = f"select * from {self.table} where dt > {previous_loaded_index[1:-1]};"
             else:
-                query = f"select * from {self.table} where {self.table}.index > {int(previous_loaded_index)};"
+                if not self.table == 'city_table':
+                    query = f"select * from {self.table} where {self.table}.index > {int(previous_loaded_index)};"
+                else:
+                    query = f"select * from {self.table} where {self.table}.CityId > {int(previous_loaded_index)};" 
             new_data = pandas.read_sql(query,mysql_hook.get_conn())
             if not new_data.empty:
-                query = f"select * from {self.table}"
+                query = f"select * from {self.table};"
                 df = pandas.read_sql(query, mysql_hook.get_conn())
                 csv_string = df.to_csv(index=False)
                 s3_hook.load_string(string_data=csv_string, key= self.s3_prefix + "/" + self.table + ".csv",replace = True, bucket_name= self.s3_bucket)
                 if self.table == 'global_temperature_table':
                     latest_load_index =  df.tail(1).loc[:,'dt'].values[0]
                 else:
-                    latest_load_index = df.tail(1).loc[:,'index'].values[0]
-                index_df = index_df.append({"index":[latest_load_index]},ignore_index=True)
+                    if not self.table == 'city_table':
+                        latest_load_index = df.tail(1).loc[:,'index'].values[0]
+                    else:
+                        latest_load_index = df.tail(1).loc[:,'CityId'].values[0]
+                index_df = index_df.append({"index":latest_load_index},ignore_index=True)
                 csv_string = index_df.to_csv(index=False)
                 s3_hook.load_string(string_data=csv_string, key= self.s3_prefix + log_key,replace = True, bucket_name= self.s3_bucket)
 

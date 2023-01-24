@@ -13,7 +13,7 @@ city_table_df["CityId"] = city_table_df.index
 temperature_df = pandas.merge(left=tempbycity_dataframe,right=city_table_df,on=["City","Country"],how="inner")
 temperature_df = temperature_df[["dt","AverageTemperature","AverageTemperatureUncertainty","CityId"]]
 
-city_table_df.to_sql(name="city_table",con=city_engine,if_exists= "replace", index=True)
+city_table_df.to_sql(name="city_table",con=city_engine,if_exists= "replace", index=False)
 temperature_df.to_sql(name="temperature_table",con=city_engine,if_exists="replace",index=True)
 
 tempbycountry_dataframe.to_sql(name="temperature_country_table",con=country_engine,if_exists="replace",index=True)
