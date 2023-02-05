@@ -2,9 +2,9 @@ from airflow.models import BaseOperator
 from airflow.hooks.mysql_hook import MySqlHook
 from airflow.hooks.S3_hook import S3Hook
 from airflow.utils.decorators import apply_defaults
-from airflow.hooks.base import BaseHook
 import pandas
 from datetime import datetime
+
 
 """
 Permissions for 'airflow_etl_key.pem' are too open.
@@ -28,12 +28,11 @@ class IncrementalLoadOperator(BaseOperator):
         self.table = table
         self.s3_bucket = s3_bucket
         self.s3_prefix = s3_prefix
+    
     def execute(self, context):
         mysql_hook = MySqlHook(self.mysql_con_id)
         s3_hook = S3Hook(self.s3_con_id)
         log_key = '/log.csv'
-        if self.s3_prefix == 'db_temperature_by_city':
-            log_key = '/temp_table_log.csv'
         if not s3_hook.check_for_key(bucket_name = self.s3_bucket, key= self.s3_prefix + log_key):
             query = f"select * from {self.table}"
             df = pandas.read_sql(query, mysql_hook.get_conn())
