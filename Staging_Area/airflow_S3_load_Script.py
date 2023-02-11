@@ -3,24 +3,26 @@ from airflow.operators.python import PythonOperator
 from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
 from airflow.utils.dates import days_ago
 from datetime import datetime, timedelta
+from airflow.models.baseoperator import chain
+
 # from task_function_dependencies import load_city_temperature, load_country_temperature, load_global_temperature
 from Airflow_Custom_Operators import IncrementalLoadOperator
 
 default_args = {
     "owner": "Nguyen Dinh Quoc",
     "depends_on_past": False,
-    "start_date": datetime(year=2023,month=1,day=21),
+    "start_date": datetime(year=2023, month=1, day=21),
     "email": ["quocthogminhqtm@gmail.com"],
     "email_on_failure": True,
     "email_on_retry": True,
     "retries": 0,
-    "retry_delay": timedelta(minutes=1)
+    "retry_delay": timedelta(minutes=1),
 }
 
 dag = DAG(
     "s3_loading_dag",
-    description= "This is an Airflow Dag to load data from sources to Staging Area (S3 Bucket)",
-    default_args=default_args
+    description="This is an Airflow Dag to load data from sources to Staging Area (S3 Bucket)",
+    default_args=default_args,
 )
 
 """
@@ -42,99 +44,154 @@ global_load_task = PythonOperator(
 )
 """
 
-# This is a more complicated way to do so
+# # This is a more complicated way to do so
 # complex_city_tab1_load_task = IncrementalLoadOperator(
-#     task_id = "Complex_city_citytable_data_load_task",
+#     task_id="Complex_city_citytable_data_load_task",
 #     dag=dag,
 #     mysql_con_id="MySQL_Con_City",
 #     s3_con_id="S3_Con",
 #     table="city_table",
-#     s3_bucket= "temperature-project-bucket",
-#     s3_prefix= "db_temperature_by_city"
+#     s3_bucket="temperature-project-bucket",
+#     s3_prefix="db_temperature_by_city",
 # )
 
 # complex_city_tab2_load_task = IncrementalLoadOperator(
-#     task_id = "Complex_city_temptable_load_task",
+#     task_id="Complex_city_temptable_load_task",
 #     dag=dag,
 #     mysql_con_id="MySQL_Con_City",
 #     s3_con_id="S3_Con",
 #     table="temperature_table",
-#     s3_bucket= "temperature-project-bucket",
-#     s3_prefix= "db_temperature_by_city"
+#     s3_bucket="temperature-project-bucket",
+#     s3_prefix="db_temperature_by_city",
 # )
 
 # complex_country_load_task = IncrementalLoadOperator(
-#     task_id = "Complex_country_data_load_task",
+#     task_id="Complex_country_data_load_task",
 #     dag=dag,
 #     mysql_con_id="MySQL_Con_Country",
 #     s3_con_id="S3_Con",
 #     table="temperature_country_table",
-#     s3_bucket= "temperature-project-bucket",
-#     s3_prefix= "db_temperature_by_country"
+#     s3_bucket="temperature-project-bucket",
+#     s3_prefix="db_temperature_by_country",
 # )
 
 # complex_global_load_task = IncrementalLoadOperator(
-#     task_id = "Complex_global_data_load_task",
+#     task_id="Complex_global_data_load_task",
 #     dag=dag,
 #     mysql_con_id="MySQL_Con_Global",
 #     s3_con_id="S3_Con",
 #     table="global_temperature_table",
-#     s3_bucket= "temperature-project-bucket",
-#     s3_prefix= "db_temperature_global"
+#     s3_bucket="temperature-project-bucket",
+#     s3_prefix="db_temperature_global",
 # )
 
 # complex_city_tab1_process_task = SparkSubmitOperator(
-#     task_id = 'Complex_city_citytable_data_process_task',
-#     dag = dag,
-#     conn_id = 'Spark_Con',
-#     application = './Spark_process_script.py',
-#     application_args = ["city_table", "temperature-project-bucket", "db_temperature_by_city"],
-#     conf ={
+#     task_id="Complex_city_citytable_data_process_task",
+#     dag=dag,
+#     conn_id="Spark_Con",
+#     application="./Spark_process_script.py",
+#     application_args=[
+#         "city_table",
+#         "temperature-project-bucket",
+#         "db_temperature_by_city",
+#     ],
+#     conf={
 #         "spark.executor.cores": 2,
 #         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000
+#         "spark.network.timeout": 10000000,
 #     },
-#      packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1"
+#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
 # complex_city_tab2_process_task = SparkSubmitOperator(
-#     task_id = 'Complex_city_temptable_process_task',
-#     dag = dag,
-#     conn_id = 'Spark_Con',
-#     application = './Spark_process_script.py',
-#     application_args = ["temperature_table", "temperature-project-bucket", "db_temperature_by_city"],
-#     conf ={
+#     task_id="Complex_city_temptable_process_task",
+#     dag=dag,
+#     conn_id="Spark_Con",
+#     application="./Spark_process_script.py",
+#     application_args=[
+#         "temperature_table",
+#         "temperature-project-bucket",
+#         "db_temperature_by_city",
+#     ],
+#     conf={
 #         "spark.executor.cores": 2,
 #         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000
+#         "spark.network.timeout": 10000000,
 #     },
-#  packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1"
+#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-complex_country_process_task = SparkSubmitOperator(
-    task_id = 'Complex_country_data_process_task',
-    dag = dag,
-    conn_id = 'Spark_Con',
-    application = './Spark_process_script.py',
-    application_args = ["temperature_country_table", "temperature-project-bucket", "db_temperature_by_country"],
-    conf ={
-        "spark.executor.cores": 2,
-        "spark.executor.memory": "1g",
-        "spark.network.timeout": 10000000
-    },
- packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1"
-)
-
-# complex_global_process_task = SparkSubmitOperator(
-#     task_id = 'Complex_global_data_process_task',
-#     dag = dag,
-#     conn_id = 'Spark_Con',
-#     application = './Spark_process_script.py',
-#     application_args = ["global_temperature_table", "temperature-project-bucket", "db_temperature_global"],
-#     conf ={
+# complex_country_process_task = SparkSubmitOperator(
+#     task_id="Complex_country_data_process_task",
+#     dag=dag,
+#     conn_id="Spark_Con",
+#     application="./Spark_process_script.py",
+#     application_args=[
+#         "temperature_country_table",
+#         "temperature-project-bucket",
+#         "db_temperature_by_country",
+#     ],
+#     conf={
 #         "spark.executor.cores": 2,
 #         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000
+#         "spark.network.timeout": 10000000,
 #     },
-#  packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1"
+#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
+# )
+
+# complex_global_process_task = SparkSubmitOperator(
+#     task_id="Complex_global_data_process_task",
+#     dag=dag,
+#     conn_id="Spark_Con",
+#     application="./Spark_process_script.py",
+#     application_args=[
+#         "global_temperature_table",
+#         "temperature-project-bucket",
+#         "db_temperature_global",
+#     ],
+#     conf={
+#         "spark.executor.cores": 2,
+#         "spark.executor.memory": "1g",
+#         "spark.network.timeout": 10000000,
+#     },
+#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
+# )
+
+complex_data_transform_task = SparkSubmitOperator(
+    task_id="Complex_data_transform_process_task",
+    dag=dag,
+    conn_id="Spark_Con",
+    application="./Spark_integrate_script.py",
+    conf={
+        "spark.executor.cores": 2,
+        "spark.executor.memory": "1g",
+        "spark.network.timeout": 10000000,
+    },
+    jars="/home/ubuntu/spark-3.3.1-bin-hadoop3/jars/redshift-jdbc42-2.1.0.11.jar",
+    packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
+)
+
+# chain(
+#     [
+#         complex_city_tab1_load_task,
+#         complex_city_tab2_load_task,
+#         complex_country_load_task,
+#         complex_global_load_task,
+#     ],
+#     [
+#         complex_city_tab1_process_task,
+#         complex_city_tab2_process_task,
+#         complex_country_process_task,
+#         complex_global_process_task,
+#     ],
+#     complex_data_transform_task,
+# )
+# chain(
+#     [
+#         complex_city_tab1_process_task,
+#         complex_city_tab2_process_task,
+#         complex_country_process_task,
+#         complex_global_process_task,
+#     ],
+#     complex_data_transform_task,
 # )

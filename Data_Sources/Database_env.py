@@ -10,7 +10,7 @@ city_config = {
     "password": "12345678",
     "port": 3306,
     "charset": "utf8mb4",
-    "use_unicode": False
+    "use_unicode": False,
 }
 conn = pymysql.connect(**city_config)
 with conn.cursor() as cursor:
@@ -18,8 +18,14 @@ with conn.cursor() as cursor:
     if not cursor.fetchone():
         cursor.execute("create database db_temperature_by_city;")
 conn.close()
-city_engine = create_engine("mysql+pymysql://{}:{}@{}:3306/{}?charset=utf8mb4"
-            .format(city_config["user"],city_config["password"],city_config["host"],"db_temperature_by_city"))
+city_engine = create_engine(
+    "mysql+pymysql://{}:{}@{}:3306/{}?charset=utf8mb4".format(
+        city_config["user"],
+        city_config["password"],
+        city_config["host"],
+        "db_temperature_by_city",
+    )
+)
 # The meta data for Country Table:
 country_config = {
     "host": "db-temperature-by-country.ca0hkxtpao0l.ap-northeast-1.rds.amazonaws.com",
@@ -27,25 +33,31 @@ country_config = {
     "password": "12345678",
     "port": 3306,
     "charset": "utf8mb4",
-    "use_unicode": False
+    "use_unicode": False,
 }
 conn = pymysql.connect(**country_config)
 with conn.cursor() as cursor:
     cursor.execute("show databases like 'db_temperature_by_country';")
-    if not cursor.fetchone():   
+    if not cursor.fetchone():
         cursor.execute("create database db_temperature_by_country;")
 conn.close()
-country_engine = create_engine("mysql+pymysql://{}:{}@{}/{}?charset=utf8mb4"
-            .format(country_config["user"],country_config["password"],country_config["host"],"db_temperature_by_country"))
+country_engine = create_engine(
+    "mysql+pymysql://{}:{}@{}/{}?charset=utf8mb4".format(
+        country_config["user"],
+        country_config["password"],
+        country_config["host"],
+        "db_temperature_by_country",
+    )
+)
 
 # The metat data for Global Table:
-global_config ={
+global_config = {
     "host": "db-temperature-global.ca0hkxtpao0l.ap-northeast-1.rds.amazonaws.com",
     "user": "admin",
     "password": "12345678",
     "port": 3306,
     "charset": "utf8mb4",
-    "use_unicode": False
+    "use_unicode": False,
 }
 conn = pymysql.connect(**global_config)
 with conn.cursor() as cursor:
@@ -53,5 +65,11 @@ with conn.cursor() as cursor:
     if not cursor.fetchone():
         cursor.execute("create database db_temperature_global;")
 conn.close()
-global_engine = create_engine("mysql+pymysql://{}:{}@{}/{}?charset=utf8mb4"
-            .format(global_config["user"],global_config["password"],global_config["host"],"db_temperature_global"))
+global_engine = create_engine(
+    "mysql+pymysql://{}:{}@{}/{}?charset=utf8mb4".format(
+        global_config["user"],
+        global_config["password"],
+        global_config["host"],
+        "db_temperature_global",
+    )
+)
