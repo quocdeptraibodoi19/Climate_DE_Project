@@ -8,7 +8,6 @@ from pyspark.sql.types import (
     TimestampType,
     DoubleType,
     StringType,
-    Row,
 )
 from pyspark import SparkConf, SparkContext
 
@@ -54,8 +53,8 @@ if s3_table == "temperature_country_table":
     process_index_arr = log_sdf.tail(2)
     if len(process_index_arr) == 2:
         process_index = process_index_arr[0]["index"]
-        s3_sdf = s3_sdf.filter(s3_sdf["index"] >= process_index)
-        
+        s3_sdf = s3_sdf.filter(s3_sdf["index"] > process_index)
+
     s3_sdf = s3_sdf.fillna(0, ["AverageTemperatureUncertainty"])
     mean_sdf = s3_sdf.groupBy("Country").agg(
         avg("AverageTemperature").alias("meanTempbyCountry")
@@ -107,7 +106,7 @@ elif s3_table == "temperature_table":
     process_index_arr = log_sdf.tail(2)
     if len(process_index_arr) == 2:
         process_index = process_index_arr[0]["index"]
-        s3_sdf = s3_sdf.filter(s3_sdf["index"] >= process_index)
+        s3_sdf = s3_sdf.filter(s3_sdf["index"] > process_index)
 
     s3_sdf = s3_sdf.fillna(0, ["AverageTemperatureUncertainty"])
     mean_sdf = s3_sdf.groupBy("CityId").agg(
@@ -166,63 +165,68 @@ elif s3_table == "global_temperature_table":
     process_index_arr = log_sdf.tail(2)
     if len(process_index_arr) == 2:
         process_index = process_index_arr[0]["index"]
-        s3_sdf = s3_sdf.filter(s3_sdf["dt"] >= process_index)
+        s3_sdf = s3_sdf.filter(s3_sdf["dt"] > process_index)
 
-    s3_sdf = s3_sdf.fillna(
-        0,
-        [
-            "LandMaxTemperatureUncertainty",
-            "LandMinTemperatureUncertainty",
-            "LandAndOceanAverageTemperatureUncertainty",
+    if s3_sdf.isEmpty():
+        s3_sdf.write.format("csv").options(header="true", delimiter=",").mode(
+            "overwrite"
+        ).save(s3_process_uri)
+    else:
+        s3_sdf = s3_sdf.fillna(
+            0,
+            [
+                "LandMaxTemperatureUncertainty",
+                "LandMinTemperatureUncertainty",
+                "LandAndOceanAverageTemperatureUncertainty",
+                "LandAverageTemperatureUncertainty",
+            ],
+        )
+        from pyspark.ml.feature import Imputer
+
+        imputer = Imputer(
+            inputCols=[
+                "LandAverageTemperature",
+                "LandMaxTemperature",
+                "LandMinTemperature",
+                "LandAndOceanAverageTemperature",
+            ],
+            outputCols=[
+                "LandAverageTemperature",
+                "LandMaxTemperature",
+                "LandMinTemperature",
+                "LandAndOceanAverageTemperature",
+            ],
+        ).setStrategy("mean")
+        filled_sdf = imputer.fit(s3_sdf).transform(s3_sdf)
+        filled_sdf = filled_sdf.withColumn(
+            "LandAverageTemperature", round("LandAverageTemperature", 3)
+        )
+        filled_sdf = filled_sdf.withColumn(
             "LandAverageTemperatureUncertainty",
-        ],
-    )
-    from pyspark.ml.feature import Imputer
-
-    imputer = Imputer(
-        inputCols=[
-            "LandAverageTemperature",
-            "LandMaxTemperature",
-            "LandMinTemperature",
-            "LandAndOceanAverageTemperature",
-        ],
-        outputCols=[
-            "LandAverageTemperature",
-            "LandMaxTemperature",
-            "LandMinTemperature",
-            "LandAndOceanAverageTemperature",
-        ],
-    ).setStrategy("mean")
-    filled_sdf = imputer.fit(s3_sdf).transform(s3_sdf)
-    filled_sdf = filled_sdf.withColumn(
-        "LandAverageTemperature", round("LandAverageTemperature", 3)
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandAverageTemperatureUncertainty",
-        round("LandAverageTemperatureUncertainty", 3),
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandMaxTemperature", round("LandMaxTemperature", 3)
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandMaxTemperatureUncertainty", round("LandMaxTemperatureUncertainty", 3)
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandMinTemperature", round("LandMinTemperature", 3)
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandMinTemperatureUncertainty", round("LandMinTemperatureUncertainty", 3)
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandAndOceanAverageTemperature", round("LandAndOceanAverageTemperature", 3)
-    )
-    filled_sdf = filled_sdf.withColumn(
-        "LandAndOceanAverageTemperatureUncertainty",
-        round("LandAndOceanAverageTemperatureUncertainty", 3),
-    )
-    filled_sdf.write.format("csv").options(header="true", delimiter=",").mode(
-        "overwrite"
-    ).save(s3_process_uri)
+            round("LandAverageTemperatureUncertainty", 3),
+        )
+        filled_sdf = filled_sdf.withColumn(
+            "LandMaxTemperature", round("LandMaxTemperature", 3)
+        )
+        filled_sdf = filled_sdf.withColumn(
+            "LandMaxTemperatureUncertainty", round("LandMaxTemperatureUncertainty", 3)
+        )
+        filled_sdf = filled_sdf.withColumn(
+            "LandMinTemperature", round("LandMinTemperature", 3)
+        )
+        filled_sdf = filled_sdf.withColumn(
+            "LandMinTemperatureUncertainty", round("LandMinTemperatureUncertainty", 3)
+        )
+        filled_sdf = filled_sdf.withColumn(
+            "LandAndOceanAverageTemperature", round("LandAndOceanAverageTemperature", 3)
+        )
+        filled_sdf = filled_sdf.withColumn(
+            "LandAndOceanAverageTemperatureUncertainty",
+            round("LandAndOceanAverageTemperatureUncertainty", 3),
+        )
+        filled_sdf.write.format("csv").options(header="true", delimiter=",").mode(
+            "overwrite"
+        ).save(s3_process_uri)
 
 elif s3_table == "city_table":
     # This is to validate data to make sure for the integrity
