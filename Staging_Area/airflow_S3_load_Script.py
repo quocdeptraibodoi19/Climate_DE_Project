@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.contrib.operators.spark_submit_operator import SparkSubmitOperator
+from airflow.providers.amazon.aws.transfers.s3_to_redshift import S3ToRedshiftOperator
 from airflow.utils.dates import days_ago
 from datetime import datetime, timedelta
 from airflow.models.baseoperator import chain
@@ -157,18 +158,87 @@ global_load_task = PythonOperator(
 #     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-complex_data_transform_task = SparkSubmitOperator(
-    task_id="Complex_data_transform_process_task",
+# complex_data_transform_task = SparkSubmitOperator(
+#     task_id="Complex_data_transform_process_task",
+#     dag=dag,
+#     conn_id="Spark_Con",
+#     application="./Spark_integrate_script.py",
+#     conf={
+#         "spark.executor.cores": 2,
+#         "spark.executor.memory": "1g",
+#         "spark.network.timeout": 10000000,
+#     },
+#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
+# )
+
+complex_load_data_country_dimension_table = S3ToRedshiftOperator(
+    task_id="Complex_load_data_country_dimension_table",
     dag=dag,
-    conn_id="Spark_Con",
-    application="./Spark_integrate_script.py",
-    conf={
-        "spark.executor.cores": 2,
-        "spark.executor.memory": "1g",
-        "spark.network.timeout": 10000000,
-    },
-    jars="/home/ubuntu/spark-3.3.1-bin-hadoop3/jars/redshift-jdbc42-2.1.0.11.jar",
-    packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
+    schema="climate_etl_schema",
+    table="country_dimension_table",
+    s3_bucket="temperature-project-bucket",
+    s3_key="integrate/data/country_dimension_table",
+    redshift_conn_id="redshift_con_id",
+    aws_conn_id="S3_Con",
+    method="APPEND",
+    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    column_list=["country","CountryId"],
+)
+
+complex_load_data_country_detail_dimension_table = S3ToRedshiftOperator(
+    task_id="Complex_load_data_country_detail_dimension_table",
+    dag=dag,
+    schema="climate_etl_schema",
+    table="country_detail_dimension_table",
+    s3_bucket="temperature-project-bucket",
+    s3_key="integrate/data/country_detail_dimension_table",
+    redshift_conn_id="redshift_con_id",
+    aws_conn_id="S3_Con",
+    method="APPEND",
+    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    column_list=["country_temperature_detail_id","dt","averagetemperature","averagetemperatureuncertainty","countryid"],
+)
+
+complex_load_data_city_dimension_table = S3ToRedshiftOperator(
+    task_id="Complex_load_data_city_dimension_table",
+    dag=dag,
+    schema="climate_etl_schema",
+    table="city_dimension_table",
+    s3_bucket="temperature-project-bucket",
+    s3_key="integrate/data/city_dimension_table",
+    redshift_conn_id="redshift_con_id",
+    aws_conn_id="S3_Con",
+    method="APPEND",
+    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    column_list=["city","latitude",'longitude','cityid'],
+)
+
+complex_load_data_city_detail_dimension_table = S3ToRedshiftOperator(
+    task_id="Complex_load_data_city_detail_dimension_table",
+    dag=dag,
+    schema="climate_etl_schema",
+    table="city_detail_dimension_table",
+    s3_bucket="temperature-project-bucket",
+    s3_key="integrate/data/city_detail_dimension_table",
+    redshift_conn_id="redshift_con_id",
+    aws_conn_id="S3_Con",
+    method="APPEND",
+    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    column_list=["CityId","City_Temperature_Detail_Id",'AverageTemperature','AverageTemperatureUncertainty','CountryId'],
+)
+
+complex_load_data_global_detail_dimension_table = S3ToRedshiftOperator(
+    task_id="Complex_load_data_global_detail_dimension_table",
+    dag=dag,
+    schema="climate_etl_schema",
+    table="global_detail_dimension_table",
+    s3_bucket="temperature-project-bucket",
+    s3_key="integrate/data/global_detail_dimension_table",
+    redshift_conn_id="redshift_con_id",
+    aws_conn_id="S3_Con",
+    method="APPEND",
+    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    column_list=["dt","LandAverageTemperature",'LandAverageTemperatureUncertainty','LandMaxTemperature','LandMinTemperature','LandMinTemperatureUncertainty','LandAndOceanAverageTemperature','LandAndOceanAverageTemperatureUncertainty','Global_Temperature_Detail_Id'],
 )
 
 # chain(
@@ -178,15 +248,6 @@ complex_data_transform_task = SparkSubmitOperator(
 #         complex_country_load_task,
 #         complex_global_load_task,
 #     ],
-#     [
-#         complex_city_tab1_process_task,
-#         complex_city_tab2_process_task,
-#         complex_country_process_task,
-#         complex_global_process_task,
-#     ],
-#     complex_data_transform_task,
-# )
-# chain(
 #     [
 #         complex_city_tab1_process_task,
 #         complex_city_tab2_process_task,

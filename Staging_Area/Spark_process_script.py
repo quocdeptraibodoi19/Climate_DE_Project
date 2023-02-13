@@ -55,6 +55,7 @@ if s3_table == "temperature_country_table":
     if len(process_index_arr) == 2:
         process_index = process_index_arr[0]["index"]
         s3_sdf = s3_sdf.filter(s3_sdf["index"] >= process_index)
+        
     s3_sdf = s3_sdf.fillna(0, ["AverageTemperatureUncertainty"])
     mean_sdf = s3_sdf.groupBy("Country").agg(
         avg("AverageTemperature").alias("meanTempbyCountry")
