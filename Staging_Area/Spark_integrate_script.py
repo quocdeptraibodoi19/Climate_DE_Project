@@ -4,6 +4,7 @@ from pyspark.sql.functions import (
     current_timestamp,
     monotonically_increasing_id,
     date_format,
+    when,
 )
 from pyspark.sql.types import (
     StructField,
@@ -21,8 +22,9 @@ s3_prefix = ""
 
 s3_process_uri = "s3a://" + s3_bucket + "/" + s3_prefix + "/" + "preprocess_" + s3_table
 s3_integrate_uri = "s3a://" + s3_bucket + "/integrate/"
-# This script is used to intergrate data into a single one.
+s3_holistics_format_uri = "s3a://temperature-project-bucket/Holistics_Country_Format/HolisticsCountryFormat_UTF8.csv"
 
+# This script is used to intergrate data into a single one.
 # country table:
 s3_prefix = "db_temperature_by_country"
 s3_table = "temperature_country_table"
@@ -202,9 +204,18 @@ temp_fact_df = temp_fact_df.join(city_detail_df, ["dt", "CountryId"], "fullouter
 # to automatically split files into chunks for handling.
 
 data_uri = s3_integrate_uri + "data/"
+holistics_country_df = (
+        spark.read.format("csv")
+        .options(header="true", inferSchema=True, delimiter=",")
+        .load(s3_holistics_format_uri)
+        .select("Countries","Full name (full)")
+        .withColumnRenamed("Full name (full)","Country_Format_Holistics")
+    )
+country_df =  country_df.join(holistics_country_df, country_df.country == holistics_country_df.Countries, "left_outer").drop("Countries")
 country_df.write.csv(
     path=data_uri + "country_dimension_table", header=True, sep=",", mode="overwrite"
 )
+country_detail_df = country_detail_df.drop("dt")
 country_detail_df.write.csv(
     path=data_uri + "country_detail_dimension_table",
     header=True,
@@ -217,12 +228,14 @@ city_df.write.csv(
     sep=",",
     mode="overwrite",
 )
+city_detail_df = city_detail_df.drop("dt")
 city_detail_df.write.csv(
     path=data_uri + "city_detail_dimension_table",
     header=True,
     sep=",",
     mode="overwrite",
 )
+global_detail_df = global_detail_df.drop("dt")
 global_detail_df.write.csv(
     path=data_uri + "global_detail_dimension_table",
     header=True,

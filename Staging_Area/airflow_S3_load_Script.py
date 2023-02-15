@@ -181,8 +181,8 @@ complex_load_data_country_dimension_table = S3ToRedshiftOperator(
     redshift_conn_id="redshift_con_id",
     aws_conn_id="S3_Con",
     method="APPEND",
-    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
-    column_list=["country","CountryId"],
+    copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
+    column_list=["country", "CountryId", "Country_Format_Holistics"],
 )
 
 complex_load_data_country_detail_dimension_table = S3ToRedshiftOperator(
@@ -195,12 +195,12 @@ complex_load_data_country_detail_dimension_table = S3ToRedshiftOperator(
     redshift_conn_id="redshift_con_id",
     aws_conn_id="S3_Con",
     method="APPEND",
-    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=[
         "country_temperature_detail_id",
-        "dt","averagetemperature",
+        "averagetemperature",
         "averagetemperatureuncertainty",
-        "countryid"
+        "countryid",
     ],
 )
 
@@ -214,8 +214,8 @@ complex_load_data_city_dimension_table = S3ToRedshiftOperator(
     redshift_conn_id="redshift_con_id",
     aws_conn_id="S3_Con",
     method="APPEND",
-    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
-    column_list=["city","latitude",'longitude','cityid'],
+    copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
+    column_list=["city", "latitude", "longitude", "cityid"],
 )
 
 complex_load_data_city_detail_dimension_table = S3ToRedshiftOperator(
@@ -228,14 +228,13 @@ complex_load_data_city_detail_dimension_table = S3ToRedshiftOperator(
     redshift_conn_id="redshift_con_id",
     aws_conn_id="S3_Con",
     method="APPEND",
-    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=[
         "CityId",
         "City_Temperature_Detail_Id",
-        "dt",
-        'AverageTemperature',
-        'AverageTemperatureUncertainty',
-        'CountryId'
+        "AverageTemperature",
+        "AverageTemperatureUncertainty",
+        "CountryId",
     ],
 )
 
@@ -249,18 +248,17 @@ complex_load_data_global_detail_dimension_table = S3ToRedshiftOperator(
     redshift_conn_id="redshift_con_id",
     aws_conn_id="S3_Con",
     method="APPEND",
-    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV","ACCEPTINVCHARS AS '?'"],
+    copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV", "ACCEPTINVCHARS AS '?'"],
     column_list=[
-        "dt",
         "LandAverageTemperature",
-        'LandAverageTemperatureUncertainty',
-        'LandMaxTemperature',
-        'LandMaxTemperatureUncertainty',
-        'LandMinTemperature',
-        'LandMinTemperatureUncertainty',
-        'LandAndOceanAverageTemperature',
-        'LandAndOceanAverageTemperatureUncertainty',
-        'global_temperature_detail_id'
+        "LandAverageTemperatureUncertainty",
+        "LandMaxTemperature",
+        "LandMaxTemperatureUncertainty",
+        "LandMinTemperature",
+        "LandMinTemperatureUncertainty",
+        "LandAndOceanAverageTemperature",
+        "LandAndOceanAverageTemperatureUncertainty",
+        "global_temperature_detail_id",
     ],
 )
 
@@ -274,12 +272,12 @@ complex_load_data_temperature_fact_table = S3ToRedshiftOperator(
     redshift_conn_id="redshift_con_id",
     aws_conn_id="S3_Con",
     method="APPEND",
-    copy_options=["IGNOREHEADER 1","DELIMITER ','", "CSV"],
+    copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=[
         "dt",
         "Country_Temperature_Detail_Id",
-        'Global_Temperature_Detail_Id',
-        'City_Temperature_Detail_Id',
+        "Global_Temperature_Detail_Id",
+        "City_Temperature_Detail_Id",
     ],
 )
 
@@ -304,5 +302,5 @@ chain(
         complex_load_data_city_detail_dimension_table,
         complex_load_data_global_detail_dimension_table,
         complex_load_data_temperature_fact_table,
-    ]
+    ],
 )

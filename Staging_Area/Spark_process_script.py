@@ -1,6 +1,16 @@
 import sys
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import when, avg, round, current_timestamp
+from pyspark.sql.functions import (
+    when,
+    avg,
+    round,
+    lit,
+    when,
+    substring,
+    length,
+    col,
+    concat,
+)
 from pyspark.sql.types import (
     StructField,
     StructType,
@@ -244,6 +254,45 @@ elif s3_table == "city_table":
         .options(header="true", mode="DROPMALFORMED", delimiter=",")
         .schema(schema)
         .load(s3_uri)
+    )
+    s3_sdf = (
+        s3_sdf.withColumn("len_col_latitude", length(col("Latitude")))
+        .withColumn("len_col_longitude", length(col("Longitude")))
+        .withColumn(
+            "Latitude",
+            when(
+                substring(s3_sdf["Latitude"], -1, 1) == "N",
+                col("Latitude").substr(lit(1), col("len_col_latitude") - lit(1)),
+            ).otherwise(
+                when(
+                    substring(s3_sdf["Latitude"], -1, 1) == "S",
+                    concat(
+                        lit("-"),
+                        col("Latitude").substr(
+                            lit(1), col("len_col_latitude") - lit(1)
+                        ),
+                    ),
+                )
+            ),
+        )
+        .withColumn(
+            "Longitude",
+            when(
+                substring(s3_sdf["Longitude"], -1, 1) == "E",
+                col("Longitude").substr(lit(1), col("len_col_longitude") - lit(1)),
+            ).otherwise(
+                when(
+                    substring(s3_sdf["Longitude"], -1, 1) == "W",
+                    concat(
+                        lit("-"),
+                        col("Longitude").substr(
+                            lit(1), col("len_col_longitude") - lit(1)
+                        ),
+                    ),
+                )
+            ),
+        )
+        .drop("len_col_latitude", "len_col_longitude")
     )
     s3_sdf.write.format("csv").options(header="true", delimiter=",").mode(
         "overwrite"
