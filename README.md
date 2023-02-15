@@ -14,7 +14,7 @@ The above questions are simulated questions of a particular analysis process.
 
 ## The architecture for the application:
 
-![Untitled](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/Untitled.png)
+![Untitled](Visualization/Untitled.png)
 
 There are 2 layers in the Staging Area implemented with S3: 
 
@@ -49,7 +49,7 @@ The trade-off of this approach is that:
 
 There are 3 MySQL databases stored in AWS RDD. Those schemas are shown below:
 
-![Untitled](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/Untitled%201.png)
+![Untitled](Visualization/Untitled%201.png)
 
 ## The Star Schema in the Data Warehouse:
 
@@ -57,7 +57,7 @@ I use AWS Redshift as a data warehouse storing processed data for analytics.
 
 The star schema for the data is shown below:
 
-![Untitled](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/Untitled%202.png)
+![Untitled](Visualization/Untitled%202.png)
 
 ## Solutions to the problem (Data visualization):
 
@@ -65,7 +65,7 @@ The star schema for the data is shown below:
 
 To answer this questions, I will present the line chart of top 5 cities having the highest average temperature over the period
 
-![chart.png](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/chart.png)
+![chart.png](Visualization/chart.png)
 
 They are respectively Bankok,  Jiddah, Umm Durman, Ho Chi Minh City, and Madras. 
 
@@ -73,7 +73,7 @@ We can clearly see in the chart that, the temperature has tended to increases ov
 
 Similarly, with countries:
 
-![chart (1).png](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/chart_(1).png)
+![chart (1).png](Visualization/chart_(1).png)
 
 5 countries having the highest average temperature over the period are Aruba, Burkina, Mali, Djibouti, and Senegal. 
 Again their temperature have the tendency to increase. 
@@ -82,16 +82,16 @@ Again their temperature have the tendency to increase.
 
 I will limit the scope of the problem down to the temperature on the land since Homo Sapiens is a kind of terrestrial animal right?
 
-![Untitled](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/Untitled%203.png)
+![Untitled](Visualization/Untitled%203.png)
 
 As shown in the table, 2013 is the period with the highest average temperature value over the period.
 
 In  a more detail view, this is the chart presenting the detail temperature value of each month in the year 2013:
 
-![chart (4).png](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/chart_(4).png)
+![chart (4).png](Visualization/chart_(4).png)
 
 ### 3. What is the tendency of the temperature globally?
 
-![chart (5).png](Data%20Engineer%20Project%20-%20Climate%20Project%2048572e3d0966431e93f011e5b55d54bd/chart_(5).png)
+![chart (5).png](Visualization/chart_(5).png)
 
 This is the area chart caring about the “Land and Ocean Average Temperature” and “Land Average Temperature” on the global basis. Both of them show the tendency to increase.
