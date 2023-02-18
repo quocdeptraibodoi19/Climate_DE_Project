@@ -102,4 +102,4 @@ In  a more detail view, this is the chart presenting the detail temperature valu
 This is the area chart caring about the “Land and Ocean Average Temperature” and “Land Average Temperature” on the global basis. Both of them show the tendency to increase.
 
 ## Future Work:
-What I have done so far is too manual and unprofessional. Thus, this project is not so similar to what is in the reality. I want to use Terraform to automate the process of setting up the infrastructure and use Docker for the ease of system deployment. I also want to apply CI/CD in my project in the future.
+What I have done so far is too manual and unprofessional. Thus, this project is not so similar to what is in the reality. I want to use Terraform to automate the process of setting up the infrastructure and use Docker for the ease of local developement and setting up. I also want to apply CI/CD in my project in the future.
