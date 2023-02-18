@@ -45,6 +45,11 @@ The trade-off of this approach is that:
 - It increases the complexity of the system
 - That data have to move to different places can downgrade the performance of the system, and increase the risk of errors, security issues,…
 
+### Setting up and Configuration:
+What I've done so far is to create 3 AWS EC2 machines. The first one is used to host the apache airflow application which is used to orchestrate the whole data pipeline. The apache airflow uses sequential executors to handle tasks. The others play a roles respectively as a master node and a worker node in the Spark Cluster. The Spark Cluster is deployed in a standalone mode.
+About the data sources, first of all, they are just csv files. Then from the local machine, I detach them and then move them into 3 AWS RDS MySQL Databases.
+About the AWS RedShift, I create a cluster of node node (free tier). This node store our processed data. 
+
 ## Data Sources’ schemas:
 
 There are 3 MySQL databases stored in AWS RDD. Those schemas are shown below:
@@ -76,7 +81,7 @@ Similarly, with countries:
 ![chart (1).png](Visualization/chart_(1).png)
 
 5 countries having the highest average temperature over the period are Aruba, Burkina, Mali, Djibouti, and Senegal. 
-Again their temperature have the tendency to increase. 
+Again their temperature have the tendency to increase.
 
 ### 2. What are periods in the history being a peak in terms of temperature?
 
@@ -95,3 +100,6 @@ In  a more detail view, this is the chart presenting the detail temperature valu
 ![chart (5).png](Visualization/chart_(5).png)
 
 This is the area chart caring about the “Land and Ocean Average Temperature” and “Land Average Temperature” on the global basis. Both of them show the tendency to increase.
+
+## Future Work:
+What I have done so far is too manual and unprofessional. Thus, this project is not so similar to what is in the reality. I want to use Terraform to automate the process of setting up the infrastructure and use Docker for the ease of system deployment. I also want to apply CI/CD in my project in the future.
