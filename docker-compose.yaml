@@ -1,0 +1,29 @@
+version: '1'
+x-airflow-common:
+  &airflow-common
+  build:
+    context: ./Docker_Container_Airflow
+  environment:
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__FERNET_KEY: ''
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+    AIRFLOW_CONN_POSTGRES_DEFAULT: postgres://airflow:airflow@postgres:5432/airflow
+    AIRFLOW_CONN_REDSHIFT: ${AIRFLOW_CONN_REDSHIFT}
+    AIRFLOW_CONN_AWS_DEFAULT: ${AIRFLOW_CONN_AWS_DEFAULT}
+    AIRFLOW_VAR_EMR_ID: ${AIRFLOW_VAR_EMR_ID}
+    AIRFLOW_VAR_BUCKET: ${AIRFLOW_VAR_BUCKET}
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./logs:/opt/airflow/logs
+    - ./plugins:/opt/airflow/plugins
+    - ./tests:/opt/airflow/tests
+    - ./data:/opt/airflow/data
+    - ./temp:/opt/airflow/temp
+    - ./migrations:/opt/airflow/migrations
+    - ./spectrum_tables:/opt/airflow/spectrum_tables
+  depends_on:
+    postgres:
+      condition: service_healthy
