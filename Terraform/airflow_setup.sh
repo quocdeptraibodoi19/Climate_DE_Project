@@ -27,5 +27,7 @@ mv ./ETL_Process/Airflow_Custom_Operators.py ./dags
 mv ./ETL_Process/airflow_S3_load_Script.py ./dags
 mv ./ETL_Process/Spark_integrate_script.py ./dags
 mv ./ETL_Process/Spark_process_script.py ./dags
+sudo apt-get -y install docker-compose
+sudo su
 docker-compose up
 

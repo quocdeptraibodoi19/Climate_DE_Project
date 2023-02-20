@@ -1,4 +1,4 @@
-version: '1'
+version: '3.3'
 x-airflow-common:
   &airflow-common
   build:
@@ -19,6 +19,13 @@ services:
   postgres:
     container_name: postgres-airflow
     image: postgres:13
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "airflow" ]
+      interval: 5s
+      retries: 5
+    restart: always
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
@@ -65,4 +72,4 @@ services:
     restart: always
     depends_on:
       - scheduler
-      - posgres
+      - postgres
