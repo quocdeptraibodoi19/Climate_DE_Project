@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.3'
 x-airflow-common:
   &airflow-common
   build:
@@ -10,6 +10,7 @@ x-airflow-common:
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
+  user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     postgres:
       condition: service_healthy
@@ -51,7 +52,7 @@ services:
     container_name: airflow_webserver
     command: webserver
     ports:
-      - 8081:8080
+      - 8080:8080
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_UPGRADE: 'true'
@@ -64,7 +65,7 @@ services:
           "CMD",
           "curl",
           "--fail",
-          "http://localhost:8081/health"
+          "http://localhost:8080/health"
         ]
       interval: 10s
       timeout: 10s
