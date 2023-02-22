@@ -167,8 +167,6 @@ resource "aws_instance" "airflow_machine" {
     ami = data.aws_ami.ubuntu.id
     instance_type = var.ec2_instance_type
     key_name = aws_key_pair.climate-key-pair.key_name
-    cpu_core_count = 3
-    cpu_threads_per_core = 2
     tags = {
         Name = var.airlfow_machine_name
     }

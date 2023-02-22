@@ -7,7 +7,7 @@ variable "region" {
 variable "ec2_instance_type" {
     description = "The instance type of the EC2 machines"
     type = string
-    default = "t3.medium"
+    default = "m4.xlarge"
 }
 
 variable "airlfow_machine_name"{
