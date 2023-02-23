@@ -29,7 +29,7 @@ mv ./ETL_Process/Airflow_Custom_Operators.py ./dags
 mv ./ETL_Process/airflow_S3_load_Script.py ./dags
 mv ./ETL_Process/Spark_integrate_script.py ./dags
 mv ./ETL_Process/Spark_process_script.py ./dags
-sudo echo "export Spark_Con=spark://${output.spark_master_public_dns}:7077" >> ~/.bashrc
+sudo echo "export Spark_Con=spark://${terraform -chdir=./Terraform output -raw spark_master_public_dns}:7077" >> ~/.bashrc
 source ~/.bashrc
 sudo docker compose up
 
