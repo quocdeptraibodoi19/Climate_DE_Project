@@ -199,9 +199,9 @@ resource "aws_instance" "worker_spark_machine" {
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
     user_data = file("worker_spark_setup.sh")
-    # depends_on = [
-    #     aws_instance.master_spark_machine
-    # ]
+    depends_on = [
+        aws_instance.master_spark_machine
+    ]
 }
 
 # Create the AWS EC2 instance
@@ -221,8 +221,8 @@ resource "aws_instance" "airflow_machine" {
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
     user_data = file("airflow_setup.sh")
-    # depends_on = [
-    #     aws_instance.master_spark_machine,
-    #     aws_instance.worker_spark_machine
-    # ]
+    depends_on = [
+        aws_instance.master_spark_machine,
+        aws_instance.worker_spark_machine
+    ]
 }
