@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "____________________________WORKER SPARK SETUP________________________________"
 # Install the java and spark to the machine 
+cd /home/ubuntu
 sudo apt-get update
 sudo apt-get install -y openjdk-8-jdk
 sudo wget https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz
