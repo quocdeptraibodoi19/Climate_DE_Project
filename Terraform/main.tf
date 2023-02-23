@@ -163,9 +163,51 @@ resource "aws_iam_instance_profile" "climate_iam_profile" {
     name = "climate_iam_profile"
     role = aws_iam_role.role.name
 }
+
+# Create the Spark Cluster from 2 EC2 machines
+# For the master node
+resource "aws_instance" "master_spark_machine" {
+    ami =  data.aws_ami.ubuntu.id
+    instance_type = var.spark_ec2_instance_type
+    key_name =  aws_key_pair.climate-key-pair.key_name
+    tags = {
+        Name = var.master_spark_machine_name
+    }
+    security_groups = [aws_security_group.climate_security_group.name]
+    root_block_device {
+        delete_on_termination = true
+        volume_size = 30
+        volume_type = "gp2"
+    }
+    iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
+    user_data = file("master_spark_setup.sh")
+}
+
+# For the worker node
+resource "aws_instance" "worker_spark_machine" {
+    ami =  data.aws_ami.ubuntu.id
+    instance_type = var.spark_ec2_instance_type
+    key_name =  aws_key_pair.climate-key-pair.key_name
+    tags = {
+        Name = var.worker_spark_machine_name
+    }
+    security_groups = [aws_security_group.climate_security_group.name]
+    root_block_device {
+        delete_on_termination = true
+        volume_size = 30
+        volume_type = "gp2"
+    }
+    iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
+    user_data = file("worker_spark_setup.sh")
+    depends_on = [
+        aws_instance.master_spark_machine
+    ]
+}
+
+# Create the AWS EC2 instance
 resource "aws_instance" "airflow_machine" {
     ami = data.aws_ami.ubuntu.id
-    instance_type = var.ec2_instance_type
+    instance_type = var.airflow_ec2_instance_type
     key_name = aws_key_pair.climate-key-pair.key_name
     tags = {
         Name = var.airlfow_machine_name
@@ -179,5 +221,8 @@ resource "aws_instance" "airflow_machine" {
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
     user_data = file("airflow_setup.sh")
+    depends_on = [
+        aws_instance.master_spark_machine,
+        aws_instance.worker_spark_machine
+    ]
 }
-
