@@ -181,14 +181,6 @@ resource "aws_instance" "master_spark_machine" {
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
     user_data = file("master_spark_setup.sh")
-    cloudinit_config {
-        write_files = {
-            path = "/home/ubuntu/public_dns.txt"
-            content = "${aws_instance.master_spark_machine.public_dns}"
-            encoding = "base64"
-            permissions = "0777"
-        }
-    }
 }
 
 # For the worker node
@@ -206,7 +198,9 @@ resource "aws_instance" "worker_spark_machine" {
         volume_type = "gp2"
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
-    user_data = file("worker_spark_setup.sh")
+    user_data = templatefile("worker_spark_setup.sh", {
+        spark_master_public_dns = aws_instance.master_spark_machine.public_dns
+    })
     depends_on = [
         aws_instance.master_spark_machine
     ]
@@ -228,7 +222,9 @@ resource "aws_instance" "airflow_machine" {
 
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
-    user_data = file("airflow_setup.sh")
+    user_data = templatefile("airflow_setup.sh", {
+        spark_host = aws_instance.master_spark_machine.public_dns
+    })
     depends_on = [
         aws_instance.master_spark_machine,
         aws_instance.worker_spark_machine
