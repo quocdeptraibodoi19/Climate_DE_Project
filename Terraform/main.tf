@@ -181,6 +181,14 @@ resource "aws_instance" "master_spark_machine" {
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
     user_data = file("master_spark_setup.sh")
+    cloudinit_config {
+        write_files = {
+            path = "/home/ubuntu/public_dns.txt"
+            content = "${aws_instance.master_spark_machine.public_dns}"
+            encoding = "base64"
+            permissions = "0777"
+        }
+    }
 }
 
 # For the worker node
