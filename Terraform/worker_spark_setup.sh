@@ -13,7 +13,7 @@ source /home/ubuntu/.bashrc
 cd ./spark-3.3.2-bin-hadoop3/conf
 sudo cp spark-env.sh.template spark-env.sh
 sudo su
-sudo echo "export SPARK_LOCAL_IP=${output.spark_worker_private_ip}" >> spark-env.sh
-sudo echo "export SPARK_WORKER_HOST=${output.spark_worker_public_dns}" >> spark-env.sh
+sudo echo "export SPARK_LOCAL_IP=${aws_instance.worker_spark_machine.private_ip}" >> spark-env.sh
+sudo echo "export SPARK_WORKER_HOST=${aws_instance.worker_spark_machine.public_dns}" >> spark-env.sh
 cd ..
-echo "spark://${output.park_master_public_dns}:7077" | ./sbin/start-worker.sh
+echo "spark://${aws_instance.master_spark_machine.public_dns}:7077" | ./sbin/start-worker.sh
