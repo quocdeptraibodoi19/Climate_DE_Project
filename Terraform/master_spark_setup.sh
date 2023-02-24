@@ -13,9 +13,9 @@ source /home/ubuntu/.bashrc
 cd ./spark-3.3.2-bin-hadoop3/conf
 sudo cp spark-env.sh.template spark-env.sh
 sudo su
-sudo echo "export SPARK_LOCAL_IP=$$(terraform -chdir=./Terraform output -raw spark_master_private_ip)" >> spark-env.sh
-sudo echo "export SPARK_MASTER_HOST=$$(terraform -chdir=./Terraform output -raw spark_master_public_dns)" >> spark-env.sh
-sudo echo "export SPARK_WORKER_HOST=$$(terraform -chdir=./Terraform output -raw spark_master_public_dns)" >> spark-env.sh
+sudo echo "export SPARK_LOCAL_IP=$(terraform -chdir=./Terraform output -raw spark_master_private_ip)" >> spark-env.sh
+sudo echo "export SPARK_MASTER_HOST=$(terraform -chdir=./Terraform output -raw spark_master_public_dns)" >> spark-env.sh
+sudo echo "export SPARK_WORKER_HOST=$(terraform -chdir=./Terraform output -raw spark_master_public_dns)" >> spark-env.sh
 cd ..
 ./sbin/start-master.sh
-echo "spark://$$(terraform -chdir=./Terraform output -raw spark_master_public_dns):7077" | ./sbin/start-worker.sh
+echo "spark://$(terraform -chdir=./Terraform output -raw spark_master_public_dns):7077" | ./sbin/start-worker.sh
