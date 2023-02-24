@@ -183,13 +183,12 @@ resource "aws_instance" "master_spark_machine" {
     user_data = file("master_spark_setup.sh")
 }
 
-# For the worker node
-data "template_file" "worker_spark_setup_script" {
-    template = file("worker_spark_setup.sh")
-    vars = {
-        spark_master_public_dns = aws_instance.master_spark_machine.public_dns
-    }
+locals {
+    spark_master_public_dns = aws_instance.master_spark_machine.public_dns
+    spark_host = aws_instance.master_spark_machine.public_dns
 }
+
+# For the worker node
 resource "aws_instance" "worker_spark_machine" {
     ami =  data.aws_ami.ubuntu.id
     instance_type = var.spark_ec2_instance_type
@@ -204,19 +203,15 @@ resource "aws_instance" "worker_spark_machine" {
         volume_type = "gp2"
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
-    user_data = data.template_file.worker_spark_setup_script.rendered
+    user_data = base64encode(template_file("worker_spark_setup.sh",{
+        spark_master_public_dns = locals.spark_master_public_dns
+    }))
     depends_on = [
         aws_instance.master_spark_machine
     ]
 }
 
 # Create the AWS EC2 instance
-data "template_file" "airflow_setup_script" {
-    template = file("airflow_setup.sh")
-    vars = {
-        spark_host = aws_instance.master_spark_machine.public_dns
-    }
-}
 resource "aws_instance" "airflow_machine" {
     ami = data.aws_ami.ubuntu.id
     instance_type = var.airflow_ec2_instance_type
@@ -232,7 +227,9 @@ resource "aws_instance" "airflow_machine" {
 
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
-    user_data = data.template_file.airflow_setup_script.rendered
+    user_data = base64encode(template_file("airflow_setup.sh",{
+        spark_host = locals.spark_host
+    }))
     depends_on = [
         aws_instance.master_spark_machine,
         aws_instance.worker_spark_machine
