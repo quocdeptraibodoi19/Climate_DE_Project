@@ -13,7 +13,7 @@ source /home/ubuntu/.bashrc
 cd ./spark-3.3.2-bin-hadoop3/conf
 sudo cp spark-env.sh.template spark-env.sh
 sudo su
-
+spark_master_public_dns="${spark_master_public_dns}"
 spark_worker_public_dns=$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)
 spark_worker_private_ip=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 sudo echo "export SPARK_LOCAL_IP=$spark_worker_private_ip" >> spark-env.sh

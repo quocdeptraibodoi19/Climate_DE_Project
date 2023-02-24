@@ -203,8 +203,8 @@ resource "aws_instance" "worker_spark_machine" {
         volume_type = "gp2"
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
-    user_data = base64encode(template_file("worker_spark_setup.sh",{
-        spark_master_public_dns = locals.spark_master_public_dns
+    user_data = base64encode(templatefile("worker_spark_setup.sh",{
+        spark_master_public_dns = local.spark_master_public_dns
     }))
     depends_on = [
         aws_instance.master_spark_machine
@@ -227,8 +227,8 @@ resource "aws_instance" "airflow_machine" {
 
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
-    user_data = base64encode(template_file("airflow_setup.sh",{
-        spark_host = locals.spark_host
+    user_data = base64encode(templatefile("airflow_setup.sh",{
+        spark_host = local.spark_host
     }))
     depends_on = [
         aws_instance.master_spark_machine,
