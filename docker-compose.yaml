@@ -50,7 +50,7 @@ services:
   webserver:
     <<: *airflow-common
     container_name: airflow_webserver
-    command: webserver
+    command: connections add "Spark_Con" --conn-uri $Spark_Con && airflow webserver
     ports:
       - 8080:8080
     environment:
