@@ -3,6 +3,8 @@ x-airflow-common:
   &airflow-common
   build:
     context: ./Docker_Container_Airflow
+    args:
+      - Spark_Con=$Spark_Con
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
