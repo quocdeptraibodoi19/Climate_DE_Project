@@ -30,6 +30,12 @@ mv ./ETL_Process/airflow_S3_load_Script.py ./dags
 mv ./ETL_Process/Spark_integrate_script.py ./dags
 mv ./ETL_Process/Spark_process_script.py ./dags
 spark_host="${spark_host}"
-sudo echo "export Spark_Con=spark://$spark_host:7077" >> /home/ubuntu/.bashrc
-source /home/ubuntu/.bashrc
-sudo docker compose up
+Spark_Con=spark://$spark_host:7077
+sudo touch env
+# This is just for checking
+sudo echo "Spark_Con=$Spark_Con" >> env
+sudo docker compose --build -d
+echo "Adding Spark connection..."
+# If we go for the way to add the airflow connection in the env variable -> this will not be showned in the airflow UI
+# This is the solution
+docker exec -it airflow_webserver airflow connections add "Spark_Con" --conn-uri $Spark_Con
