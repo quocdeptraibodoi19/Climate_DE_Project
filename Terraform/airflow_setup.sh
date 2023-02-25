@@ -38,4 +38,4 @@ sudo docker compose up --build -d
 echo "Adding Spark connection..."
 # If we go for the way to add the airflow connection in the env variable -> this will not be showned in the airflow UI
 # This is the solution
-docker exec -it airflow_webserver airflow connections add "Spark_Con" --conn-uri $Spark_Con
+sudo docker exec -it airflow_webserver airflow connections add "Spark_Con" --conn-uri $Spark_Con
