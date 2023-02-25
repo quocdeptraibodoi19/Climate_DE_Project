@@ -3,12 +3,11 @@ x-airflow-common:
   &airflow-common
   build:
     context: ./Docker_Container_Airflow
-    args:
-      - Spark_Con=$Spark_Con
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW_CONN_SPARK_CON: $Spark_Con
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs

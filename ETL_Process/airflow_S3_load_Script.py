@@ -89,7 +89,7 @@ complex_global_load_task = IncrementalLoadOperator(
 complex_city_tab1_process_task = SparkSubmitOperator(
     task_id="Complex_city_citytable_data_process_task",
     dag=dag,
-    conn_id="Spark_Con",
+    conn_id="spark_con",
     application="./Spark_process_script.py",
     application_args=[
         "city_table",
@@ -107,7 +107,7 @@ complex_city_tab1_process_task = SparkSubmitOperator(
 complex_city_tab2_process_task = SparkSubmitOperator(
     task_id="Complex_city_temptable_process_task",
     dag=dag,
-    conn_id="Spark_Con",
+    conn_id="spark_con",
     application="./Spark_process_script.py",
     application_args=[
         "temperature_table",
@@ -125,7 +125,7 @@ complex_city_tab2_process_task = SparkSubmitOperator(
 complex_country_process_task = SparkSubmitOperator(
     task_id="Complex_country_data_process_task",
     dag=dag,
-    conn_id="Spark_Con",
+    conn_id="spark_con",
     application="./Spark_process_script.py",
     application_args=[
         "temperature_country_table",
@@ -143,7 +143,7 @@ complex_country_process_task = SparkSubmitOperator(
 complex_global_process_task = SparkSubmitOperator(
     task_id="Complex_global_data_process_task",
     dag=dag,
-    conn_id="Spark_Con",
+    conn_id="spark_con",
     application="./Spark_process_script.py",
     application_args=[
         "global_temperature_table",
@@ -161,7 +161,7 @@ complex_global_process_task = SparkSubmitOperator(
 complex_data_transform_task = SparkSubmitOperator(
     task_id="Complex_data_transform_process_task",
     dag=dag,
-    conn_id="Spark_Con",
+    conn_id="spark_con",
     application="./Spark_integrate_script.py",
     conf={
         "spark.executor.cores": 2,

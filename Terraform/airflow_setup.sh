@@ -35,6 +35,5 @@ sudo touch env
 # This is just for checking
 sudo echo "Spark_Con=$Spark_Con" >> env
 sudo docker compose --env-file env up --build -d
-echo "Adding Spark connection..."
 # If we go for the way to add the airflow connection in the env variable -> this will not be showned in the airflow UI
 # This is the solution
