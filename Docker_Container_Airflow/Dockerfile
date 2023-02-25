@@ -1,4 +1,4 @@
 FROM apache/airflow:latest
 COPY requirements.txt /
 # RUN pip install --no-cache-dir -r /requirements.txt
-RUN  pip install pandas apache-airflow pyspark &&  pip install --no-cache-dir -r /requirements.txt
+RUN  pip install pandas apache-airflow pyspark &&  pip install --no-cache-dir -r /requirements.txt && airflow connections add "Spark_Con" --conn-uri $Spark_Con
