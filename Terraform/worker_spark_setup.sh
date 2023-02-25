@@ -19,4 +19,4 @@ spark_worker_private_ip=$(curl -s http://169.254.169.254/latest/meta-data/local-
 sudo echo "export SPARK_LOCAL_IP=$spark_worker_private_ip" >> spark-env.sh
 sudo echo "export SPARK_WORKER_HOST=$spark_worker_public_dns" >> spark-env.sh
 cd ..
-echo "spark://$spark_master_public_dns:7077" | ./sbin/start-worker.sh
+echo "spark://$spark_master_public_dns:7077" | sudo ./sbin/start-worker.sh

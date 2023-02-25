@@ -20,5 +20,5 @@ sudo echo "export SPARK_LOCAL_IP=$spark_master_private_ip" >> spark-env.sh
 sudo echo "export SPARK_MASTER_HOST=$spark_master_public_dns" >> spark-env.sh
 sudo echo "export SPARK_WORKER_HOST=$spark_master_public_dns" >> spark-env.sh
 cd ..
-./sbin/start-master.sh
-echo "spark://$spark_master_public_dns:7077" | ./sbin/start-worker.sh
+sudo ./sbin/start-master.sh
+echo "spark://$spark_master_public_dns:7077" | sudo ./sbin/start-worker.sh
