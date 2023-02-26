@@ -8,6 +8,10 @@ x-airflow-common:
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW_CONN_SPARK_CON: $Spark_Con
+    AIRFLOW_CONN_MYSQL_CON_CITY: $MySQL_Con_City
+    AIRFLOW_CONN_MYSQL_CON_COUNTRY: $MySQL_Con_Country
+    AIRFLOW_CONN_MYSQL_CON_GLOBAL: $MySQL_Con_Global
+    AIRFLOW_CONN_S3_CON: $S3_Con
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs

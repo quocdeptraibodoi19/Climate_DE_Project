@@ -33,3 +33,33 @@ output "spark_worker_private_ip" {
   description = "EC2 spark worker machine private IP"
   value = aws_instance.worker_spark_machine.private_ip
 }
+
+output "S3_Bucket" {
+    description = "The S3 bucket name"
+    value = aws_s3_bucket.climate_bucket.bucket
+}
+
+output "city_db_source_host" {
+  description = "RDS City Database Host"
+  value = aws_db_instance.city_db.endpoint
+}
+
+output "country_db_source_host" {
+  description = "RDS Country Database Host"
+  value = aws_db_instance.country_db.endpoint
+}
+
+output "global_db_source_host" {
+  description = "RDS Global Database Host"
+  value = aws_db_instance.global_db.endpoint
+}
+
+output "rds_username" {
+  description = "The username of rds"
+  value = aws_db_instance.city_db.username
+}
+
+output "rds_password" {
+  description = "The password of rds"
+  value = aws_db_instance.city_db.password
+}

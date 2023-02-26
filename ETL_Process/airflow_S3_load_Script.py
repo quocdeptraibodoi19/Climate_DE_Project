@@ -49,40 +49,40 @@ global_load_task = PythonOperator(
 complex_city_tab1_load_task = IncrementalLoadOperator(
     task_id="Complex_city_citytable_data_load_task",
     dag=dag,
-    mysql_con_id="MySQL_Con_City",
-    s3_con_id="S3_Con",
+    mysql_con_id="mysql_con_city",
+    s3_con_id="s3_con",
     table="city_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_prefix="db_temperature_by_city",
 )
 
 complex_city_tab2_load_task = IncrementalLoadOperator(
     task_id="Complex_city_temptable_load_task",
     dag=dag,
-    mysql_con_id="MySQL_Con_City",
-    s3_con_id="S3_Con",
+    mysql_con_id="mysql_con_city",
+    s3_con_id="s3_con",
     table="temperature_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_prefix="db_temperature_by_city",
 )
 
 complex_country_load_task = IncrementalLoadOperator(
     task_id="Complex_country_data_load_task",
     dag=dag,
-    mysql_con_id="MySQL_Con_Country",
-    s3_con_id="S3_Con",
+    mysql_con_id="mysql_con_country",
+    s3_con_id="s3_con",
     table="temperature_country_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_prefix="db_temperature_by_country",
 )
 
 complex_global_load_task = IncrementalLoadOperator(
     task_id="Complex_global_data_load_task",
     dag=dag,
-    mysql_con_id="MySQL_Con_Global",
-    s3_con_id="S3_Con",
+    mysql_con_id="mysql_con_global",
+    s3_con_id="s3_con",
     table="global_temperature_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_prefix="db_temperature_global",
 )
 
@@ -93,7 +93,7 @@ complex_city_tab1_process_task = SparkSubmitOperator(
     application="./Spark_process_script.py",
     application_args=[
         "city_table",
-        "temperature-project-bucket",
+        "temperature-project-bucket1",
         "db_temperature_by_city",
     ],
     conf={
@@ -111,7 +111,7 @@ complex_city_tab2_process_task = SparkSubmitOperator(
     application="./Spark_process_script.py",
     application_args=[
         "temperature_table",
-        "temperature-project-bucket",
+        "temperature-project-bucket1",
         "db_temperature_by_city",
     ],
     conf={
@@ -129,7 +129,7 @@ complex_country_process_task = SparkSubmitOperator(
     application="./Spark_process_script.py",
     application_args=[
         "temperature_country_table",
-        "temperature-project-bucket",
+        "temperature-project-bucket1",
         "db_temperature_by_country",
     ],
     conf={
@@ -147,7 +147,7 @@ complex_global_process_task = SparkSubmitOperator(
     application="./Spark_process_script.py",
     application_args=[
         "global_temperature_table",
-        "temperature-project-bucket",
+        "temperature-project-bucket1",
         "db_temperature_global",
     ],
     conf={
@@ -176,10 +176,10 @@ complex_load_data_country_dimension_table = S3ToRedshiftOperator(
     dag=dag,
     schema="climate_etl_schema",
     table="country_dimension_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_key="integrate/data/country_dimension_table",
     redshift_conn_id="redshift_con_id",
-    aws_conn_id="S3_Con",
+    aws_conn_id="s3_con",
     method="APPEND",
     copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=["country", "CountryId", "Country_Format_Holistics"],
@@ -190,10 +190,10 @@ complex_load_data_country_detail_dimension_table = S3ToRedshiftOperator(
     dag=dag,
     schema="climate_etl_schema",
     table="country_detail_dimension_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_key="integrate/data/country_detail_dimension_table",
     redshift_conn_id="redshift_con_id",
-    aws_conn_id="S3_Con",
+    aws_conn_id="s3_con",
     method="APPEND",
     copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=[
@@ -209,10 +209,10 @@ complex_load_data_city_dimension_table = S3ToRedshiftOperator(
     dag=dag,
     schema="climate_etl_schema",
     table="city_dimension_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_key="integrate/data/city_dimension_table",
     redshift_conn_id="redshift_con_id",
-    aws_conn_id="S3_Con",
+    aws_conn_id="s3_con",
     method="APPEND",
     copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=["city", "latitude", "longitude", "cityid"],
@@ -223,10 +223,10 @@ complex_load_data_city_detail_dimension_table = S3ToRedshiftOperator(
     dag=dag,
     schema="climate_etl_schema",
     table="city_detail_dimension_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_key="integrate/data/city_detail_dimension_table",
     redshift_conn_id="redshift_con_id",
-    aws_conn_id="S3_Con",
+    aws_conn_id="s3_con",
     method="APPEND",
     copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=[
@@ -243,10 +243,10 @@ complex_load_data_global_detail_dimension_table = S3ToRedshiftOperator(
     dag=dag,
     schema="climate_etl_schema",
     table="global_detail_dimension_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_key="integrate/data/global_detail_dimension_table",
     redshift_conn_id="redshift_con_id",
-    aws_conn_id="S3_Con",
+    aws_conn_id="s3_con",
     method="APPEND",
     copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV", "ACCEPTINVCHARS AS '?'"],
     column_list=[
@@ -267,10 +267,10 @@ complex_load_data_temperature_fact_table = S3ToRedshiftOperator(
     dag=dag,
     schema="climate_etl_schema",
     table="temperature_fact_table",
-    s3_bucket="temperature-project-bucket",
+    s3_bucket="temperature-project-bucket1",
     s3_key="integrate/data/temperature_fact_table",
     redshift_conn_id="redshift_con_id",
-    aws_conn_id="S3_Con",
+    aws_conn_id="s3_con",
     method="APPEND",
     copy_options=["IGNOREHEADER 1", "DELIMITER ','", "CSV"],
     column_list=[

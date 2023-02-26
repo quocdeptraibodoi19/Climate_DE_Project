@@ -1,13 +1,20 @@
 from sqlalchemy import create_engine
 import pymysql
+import sys
+
+username = sys.argv[1]
+password = sys.argv[2]
+city_host = sys.argv[3]
+country_host = sys.argv[4]
+global_host = sys.argv[5]
 
 # This is all revoked before I push it into my Github
 
 # The meta data for Major City Table:
 city_config = {
-    "host": "db-temperature-by-city.ca0hkxtpao0l.ap-northeast-1.rds.amazonaws.com",
-    "user": "admin",
-    "password": "12345678",
+    "host": city_host,
+    "user": username,
+    "password": password,
     "port": 3306,
     "charset": "utf8mb4",
     "use_unicode": False,
@@ -28,9 +35,9 @@ city_engine = create_engine(
 )
 # The meta data for Country Table:
 country_config = {
-    "host": "db-temperature-by-country.ca0hkxtpao0l.ap-northeast-1.rds.amazonaws.com",
-    "user": "admin",
-    "password": "12345678",
+    "host": country_host,
+    "user": username,
+    "password": password,
     "port": 3306,
     "charset": "utf8mb4",
     "use_unicode": False,
@@ -52,9 +59,9 @@ country_engine = create_engine(
 
 # The metat data for Global Table:
 global_config = {
-    "host": "db-temperature-global.ca0hkxtpao0l.ap-northeast-1.rds.amazonaws.com",
-    "user": "admin",
-    "password": "12345678",
+    "host": global_host,
+    "user": username,
+    "password": password,
     "port": 3306,
     "charset": "utf8mb4",
     "use_unicode": False,

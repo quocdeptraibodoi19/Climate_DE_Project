@@ -164,6 +164,62 @@ resource "aws_iam_instance_profile" "climate_iam_profile" {
     role = aws_iam_role.role.name
 }
 
+# Create the s3 bucket - a storage region
+resource "aws_s3_bucket" "climate_bucket" {
+    bucket = "temperature-project-bucket1"
+    acl = "private"
+    force_destroy = true
+}
+
+# Create the data sources (MySQL RDS Databases) 
+resource "aws_db_instance" "city_db" {
+    allocated_storage = 20
+    identifier = "db-temperature-by-city1"
+    engine = "mysql"
+    engine_version = "8.0.28"
+    instance_class = "db.t3.micro"
+    username = "admin"
+    password = "12345678"
+    max_allocated_storage = 1000
+    publicly_accessible = true
+    delete_automated_backups = true
+    security_group_names = [aws_security_group.climate_security_group.name]
+    network_type = "IPV4"
+    ca_cert_identifier = "rds-ca-2019"
+}
+
+resource "aws_db_instance" "country_db" {
+    allocated_storage = 20
+    identifier = "db-temperature-by-country1"
+    engine = "mysql"
+    engine_version = "8.0.28"
+    instance_class = "db.t3.micro"
+    username = "admin"
+    password = "12345678"
+    max_allocated_storage = 1000
+    publicly_accessible = true
+    delete_automated_backups = true
+    security_group_names = [aws_security_group.climate_security_group.name]
+    network_type = "IPV4"
+    ca_cert_identifier = "rds-ca-2019"
+}
+
+resource "aws_db_instance" "global_db" {
+    allocated_storage = 20
+    identifier = "db-temperature-global1"
+    engine = "mysql"
+    engine_version = "8.0.28"
+    instance_class = "db.t3.micro"
+    username = "admin"
+    password = "12345678"
+    max_allocated_storage = 1000
+    publicly_accessible = true
+    delete_automated_backups = true
+    security_group_names = [aws_security_group.climate_security_group.name]
+    network_type = "IPV4"
+    ca_cert_identifier = "rds-ca-2019"
+}
+
 # Create the Spark Cluster from 2 EC2 machines
 # For the master node
 resource "aws_instance" "master_spark_machine" {
@@ -183,9 +239,25 @@ resource "aws_instance" "master_spark_machine" {
     user_data = file("master_spark_setup.sh")
 }
 
+# Here the AWS will use the root access key and secret key (You can try to use IAM mode if you like)
+data "aws_iam_access_key" "root" {
+    user = "root"
+}
+
 locals {
     spark_master_public_dns = aws_instance.master_spark_machine.public_dns
     spark_host = aws_instance.master_spark_machine.public_dns
+    rds_username = aws_db_instance.city_db.username
+    rds_password = aws_db_instance.city_db.password
+    rds_city_hostname = aws_db_instance.city_db.endpoint
+    rds_city_schema = "db_temperature_by_city"
+    rds_country_hostname = aws_db_instance.country_db.endpoint
+    rds_country_schema = "db_temperature_by_country"
+    rds_global_hostname = aws_db_instance.global_db.endpoint
+    rds_global_schema = "db_temperature_global"
+    aws_access_key = data.aws_iam_access_key.root.id
+    aws_secret_key = data.aws_iam_access_key.root.secret
+    s3_bucket_name = aws_s3_bucket.climate_bucket.bucket
 }
 
 # For the worker node
@@ -228,10 +300,25 @@ resource "aws_instance" "airflow_machine" {
     }
     iam_instance_profile = aws_iam_instance_profile.climate_iam_profile.name
     user_data = base64encode(templatefile("airflow_setup.sh",{
-        spark_host = local.spark_host
+        spark_host = local.spark_host,
+        rds_username = local.rds_username,
+        rds_password = local.rds_password,
+        rds_city_hostname = local.rds_city_hostname,
+        rds_country_hostname = local.rds_country_hostname,
+        rds_global_hostname = local.rds_global_hostname,
+        rds_city_schema = local.rds_city_schema,
+        rds_country_schema = local.rds_country_schema,
+        rds_global_schema = local.rds_global_schema,
+        aws_access_key = local.aws_access_key,
+        aws_secret_key = local.aws_secret_key,
+        s3_bucket_name = local.s3_bucket_name,
     }))
     depends_on = [
         aws_instance.master_spark_machine,
-        aws_instance.worker_spark_machine
+        aws_instance.worker_spark_machine,
+        aws_s3_bucket.climate_bucket,
+        aws_db_instance.city_db,
+        aws_db_instance.country_db,
+        aws_db_instance.global_db
     ]
 }

@@ -29,11 +29,35 @@ mv ./ETL_Process/Airflow_Custom_Operators.py ./dags
 mv ./ETL_Process/airflow_S3_load_Script.py ./dags
 mv ./ETL_Process/Spark_integrate_script.py ./dags
 mv ./ETL_Process/Spark_process_script.py ./dags
+
 spark_host="${spark_host}"
 Spark_Con=spark://$spark_host:7077
+
+rds_username="${rds_username}"
+rds_password="${rds_password}"
+
+rds_city_hostname="${rds_city_hostname}"
+MySQL_Con_City=mysql://$rds_username:$rds_password@$rds_city_hostname:3306/"${rds_city_schema}"
+
+rds_country_hostname="${rds_country_hostname}"
+MySQL_Con_Country=mysql://$rds_username:$rds_password@$rds_country_hostname:3306/"${rds_country_schema}"
+
+rds_global_hostname="${rds_global_hostname}"
+MySQL_Con_Global=mysql://$rds_username:$rds_password@$rds_global_hostname:3306/"${rds_global_schema}"
+
+aws_access_key="${aws_access_key}"
+aws_secret_key="${aws_secret_key}"
+s3_bucket_name="${s3_bucket_name}"
+S3_Con=s3://$aws_access_key:$aws_access_key?region_name=ap-northeast-1
+
 sudo touch env
 # This is just for checking
 sudo echo "Spark_Con=$Spark_Con" >> env
+sudo echo "MySQL_Con_City=$MySQL_Con_City" >> env
+sudo echo "MySQL_Con_Country=$MySQL_Con_Country" >> env
+sudo echo "MySQL_Con_Global=$MySQL_Con_Global" >> env
+sudo echo "S3_Con=$S3_Con" >> env
+
 sudo docker compose --env-file env up --build -d
 # If we go for the way to add the airflow connection in the env variable -> this will not be showned in the airflow UI
 # This is the solution
