@@ -164,6 +164,30 @@ resource "aws_iam_instance_profile" "climate_iam_profile" {
     role = aws_iam_role.role.name
 }
 
+# Create IAM user
+resource "aws_iam_user" "climate_temperature_user" {
+    name = "climate_temperature_user"
+}
+
+resource "aws_iam_access_key" "climate_access_key" {
+    user = aws_iam_user.climate_temperature_user.name
+}
+
+resource "aws_iam_user_policy_attachment" "ec2" {
+    user = aws_iam_user.climate_temperature_user.name
+    policy_arn = "arn:aws:iam::aws:policy/AmazonEC2FullAccess"
+}
+
+resource "aws_iam_user_policy_attachment" "rds" {
+    user = aws_iam_user.climate_temperature_user.name
+    policy_arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+}
+
+resource "aws_iam_user_policy_attachment" "s3" {
+    user = aws_iam_user.climate_temperature_user.name
+    policy_arn = "arn:aws:iam::aws:policy/AmazonRedshiftFullAccess"
+}
+
 # Create the s3 bucket - a storage region
 resource "aws_s3_bucket" "climate_bucket" {
     bucket = "temperature-project-bucket1"
@@ -239,11 +263,6 @@ resource "aws_instance" "master_spark_machine" {
     user_data = file("master_spark_setup.sh")
 }
 
-# Here the AWS will use the root access key and secret key (You can try to use IAM mode if you like)
-data "aws_iam_access_key" "root" {
-    user = "root"
-}
-
 locals {
     spark_master_public_dns = aws_instance.master_spark_machine.public_dns
     spark_host = aws_instance.master_spark_machine.public_dns
@@ -255,8 +274,8 @@ locals {
     rds_country_schema = "db_temperature_by_country"
     rds_global_hostname = aws_db_instance.global_db.endpoint
     rds_global_schema = "db_temperature_global"
-    aws_access_key = data.aws_iam_access_key.root.id
-    aws_secret_key = data.aws_iam_access_key.root.secret
+    aws_access_key = aws_iam_access_key.climate_access_key.id
+    aws_secret_key = aws_iam_access_key.climate_access_key.secret
     s3_bucket_name = aws_s3_bucket.climate_bucket.bucket
 }
 
