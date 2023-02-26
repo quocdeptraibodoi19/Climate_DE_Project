@@ -209,6 +209,8 @@ resource "aws_db_instance" "city_db" {
     delete_automated_backups = true
     network_type = "IPV4"
     ca_cert_identifier = "rds-ca-2019"
+    skip_final_snapshot = true
+    final_snapshot_identifier = null
 }
 
 resource "aws_db_instance" "country_db" {
@@ -224,6 +226,8 @@ resource "aws_db_instance" "country_db" {
     delete_automated_backups = true
     network_type = "IPV4"
     ca_cert_identifier = "rds-ca-2019"
+    skip_final_snapshot = true
+    final_snapshot_identifier = null
 }
 
 resource "aws_db_instance" "global_db" {
@@ -239,6 +243,8 @@ resource "aws_db_instance" "global_db" {
     delete_automated_backups = true
     network_type = "IPV4"
     ca_cert_identifier = "rds-ca-2019"
+    skip_final_snapshot = true
+    final_snapshot_identifier = null
 }
 
 # Create the Spark Cluster from 2 EC2 machines
