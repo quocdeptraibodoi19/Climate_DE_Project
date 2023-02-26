@@ -207,7 +207,6 @@ resource "aws_db_instance" "city_db" {
     max_allocated_storage = 1000
     publicly_accessible = true
     delete_automated_backups = true
-    security_group_names = [aws_security_group.climate_security_group.name]
     network_type = "IPV4"
     ca_cert_identifier = "rds-ca-2019"
 }
@@ -223,7 +222,6 @@ resource "aws_db_instance" "country_db" {
     max_allocated_storage = 1000
     publicly_accessible = true
     delete_automated_backups = true
-    security_group_names = [aws_security_group.climate_security_group.name]
     network_type = "IPV4"
     ca_cert_identifier = "rds-ca-2019"
 }
@@ -239,7 +237,6 @@ resource "aws_db_instance" "global_db" {
     max_allocated_storage = 1000
     publicly_accessible = true
     delete_automated_backups = true
-    security_group_names = [aws_security_group.climate_security_group.name]
     network_type = "IPV4"
     ca_cert_identifier = "rds-ca-2019"
 }
@@ -268,11 +265,11 @@ locals {
     spark_host = aws_instance.master_spark_machine.public_dns
     rds_username = aws_db_instance.city_db.username
     rds_password = aws_db_instance.city_db.password
-    rds_city_hostname = aws_db_instance.city_db.endpoint
+    rds_city_hostname = aws_db_instance.city_db.domain
     rds_city_schema = "db_temperature_by_city"
-    rds_country_hostname = aws_db_instance.country_db.endpoint
+    rds_country_hostname = aws_db_instance.country_db.domain
     rds_country_schema = "db_temperature_by_country"
-    rds_global_hostname = aws_db_instance.global_db.endpoint
+    rds_global_hostname = aws_db_instance.global_db.domain
     rds_global_schema = "db_temperature_global"
     aws_access_key = aws_iam_access_key.climate_access_key.id
     aws_secret_key = aws_iam_access_key.climate_access_key.secret

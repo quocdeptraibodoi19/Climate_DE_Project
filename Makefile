@@ -1,5 +1,11 @@
-init:
+venv:
+	python3 -m venv ./climate-venv && . ./climate-venv/bin/activate && pip3 install pandas sqlalchemy pymysql && deactivate
+
+infra-init:
 	terraform -chdir=./Terraform init
+
+init:
+	venv infra-init
 
 up:
 	terraform -chdir=./Terraform apply
@@ -8,7 +14,7 @@ down:
 	terraform -chdir=./Terraform destroy 
 
 init-datasource:
-	python ./Data_Sources/data_source_modeling.py $$(terraform -chdir=./Terraform output -raw rds_username) $$(terraform -chdir=./Terraform output -raw rds_password) $$(terraform -chdir=./Terraform output -raw city_db_source_host) $$(terraform -chdir=./Terraform output -raw country_db_source_host) $$(terraform -chdir=./Terraform output -raw global_db_source_host)
+	. ./climate-venv/bin/activate && python ./Data_Sources/data_source_modeling.py $$(terraform -chdir=./Terraform output -raw rds_username) $$(terraform -chdir=./Terraform output -raw rds_password) $$(terraform -chdir=./Terraform output -raw city_db_source_host) $$(terraform -chdir=./Terraform output -raw country_db_source_host) $$(terraform -chdir=./Terraform output -raw global_db_source_host) && deactivate
 
 ssh-airflow:
 	terraform -chdir=./Terraform output -raw private_key > private_key.pem && chmod 600 private_key.pem && ssh -o "IdentitiesOnly yes" -i "private_key.pem" ubuntu@$$(terraform -chdir=./Terraform output -raw airflow_public_dns) && rm private_key.pem

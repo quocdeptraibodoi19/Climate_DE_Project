@@ -5,13 +5,13 @@ from Database_env import city_engine, country_engine, global_engine
 
 # This is to read data from csv file into a dataframe
 tempbycountry_dataframe = pandas.read_csv(
-    filepath_or_buffer="Data_Sources\GlobalLandTemperaturesByCountry.csv"
+    filepath_or_buffer="./Data_Sources/GlobalLandTemperaturesByCountry.csv"
 )
 tempbycity_dataframe = pandas.read_csv(
-    filepath_or_buffer="Data_Sources\GlobalLandTemperaturesByMajorCity.csv"
+    filepath_or_buffer="./Data_Sources/GlobalLandTemperaturesByMajorCity.csv"
 )
 globaltemp_dataframe = pandas.read_csv(
-    filepath_or_buffer="Data_Sources\GlobalTemperatures.csv"
+    filepath_or_buffer="./Data_Sources/GlobalTemperatures.csv"
 )
 
 # Denormalizing the GlobalTemperatureByMajorCity
@@ -40,7 +40,6 @@ tempbycountry_dataframe.to_sql(
     if_exists="replace",
     index=True,
 )
-
 
 globaltemp_dataframe.to_sql(
     name="global_temperature_table", con=global_engine, if_exists="replace", index=False
