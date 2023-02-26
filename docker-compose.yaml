@@ -12,9 +12,12 @@ x-airflow-common:
     AIRFLOW_CONN_MYSQL_CON_COUNTRY: $MySQL_Con_Country
     AIRFLOW_CONN_MYSQL_CON_GLOBAL: $MySQL_Con_Global
     AIRFLOW_CONN_S3_CON: $S3_Con
+    JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64/
   volumes:
+    - /lib:/lib
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
+    - /usr/lib/jvm/:/usr/lib/jvm/
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   depends_on:
     postgres:
