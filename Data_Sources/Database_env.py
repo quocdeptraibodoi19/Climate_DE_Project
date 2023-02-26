@@ -4,9 +4,9 @@ import sys
 
 username = sys.argv[1]
 password = sys.argv[2]
-city_host = sys.argv[3]
-country_host = sys.argv[4]
-global_host = sys.argv[5]
+city_host = sys.argv[3][0:-5]
+country_host = sys.argv[4][0:-5]
+global_host = sys.argv[5][0:-5]
 
 # This is all revoked before I push it into my Github
 

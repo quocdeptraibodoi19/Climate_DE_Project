@@ -271,11 +271,11 @@ locals {
     spark_host = aws_instance.master_spark_machine.public_dns
     rds_username = aws_db_instance.city_db.username
     rds_password = aws_db_instance.city_db.password
-    rds_city_hostname = aws_db_instance.city_db.domain
+    rds_city_hostname = aws_db_instance.city_db.endpoint
     rds_city_schema = "db_temperature_by_city"
-    rds_country_hostname = aws_db_instance.country_db.domain
+    rds_country_hostname = aws_db_instance.country_db.endpoint
     rds_country_schema = "db_temperature_by_country"
-    rds_global_hostname = aws_db_instance.global_db.domain
+    rds_global_hostname = aws_db_instance.global_db.endpoint
     rds_global_schema = "db_temperature_global"
     aws_access_key = aws_iam_access_key.climate_access_key.id
     aws_secret_key = aws_iam_access_key.climate_access_key.secret

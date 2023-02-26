@@ -4,8 +4,7 @@ venv:
 infra-init:
 	terraform -chdir=./Terraform init
 
-init:
-	venv infra-init
+init: venv infra-init
 
 up:
 	terraform -chdir=./Terraform apply

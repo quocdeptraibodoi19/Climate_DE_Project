@@ -37,13 +37,13 @@ rds_username="${rds_username}"
 rds_password="${rds_password}"
 
 rds_city_hostname="${rds_city_hostname}"
-MySQL_Con_City=mysql://$rds_username:$rds_password@$rds_city_hostname:3306/"${rds_city_schema}"
+MySQL_Con_City=mysql://$rds_username:$rds_password@$rds_city_hostname/"${rds_city_schema}"
 
 rds_country_hostname="${rds_country_hostname}"
-MySQL_Con_Country=mysql://$rds_username:$rds_password@$rds_country_hostname:3306/"${rds_country_schema}"
+MySQL_Con_Country=mysql://$rds_username:$rds_password@$rds_country_hostname/"${rds_country_schema}"
 
 rds_global_hostname="${rds_global_hostname}"
-MySQL_Con_Global=mysql://$rds_username:$rds_password@$rds_global_hostname:3306/"${rds_global_schema}"
+MySQL_Con_Global=mysql://$rds_username:$rds_password@$rds_global_hostname/"${rds_global_schema}"
 
 aws_access_key="${aws_access_key}"
 aws_secret_key="${aws_secret_key}"

@@ -41,10 +41,10 @@ output "S3_Bucket" {
 
 output "city_db_source_host" {
   description = "RDS City Database Host"
-  value = aws_db_instance.city_db.domain
+  value = aws_db_instance.city_db.endpoint
 }
 
-output "country_db_source_endpoint" {
+output "country_db_source_host" {
   description = "RDS Country Database Host"
   value = aws_db_instance.country_db.endpoint
 }
@@ -52,11 +52,6 @@ output "country_db_source_endpoint" {
 output "global_db_source_host" {
   description = "RDS Global Database Host"
   value = aws_db_instance.global_db.endpoint
-}
-
-output "global_db_source_domain" {
-  description = "RDS Global Database Host"
-  value = aws_db_instance.global_db.domain
 }
 
 output "rds_username" {
