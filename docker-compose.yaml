@@ -47,7 +47,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          'airflow jobs check --job-type SchedulerJob "$${local_host_dns}"'
+          'airflow jobs check --job-type SchedulerJob --hostname "$${local_host_dns}"'
         ]
       interval: 10s
       timeout: 10s

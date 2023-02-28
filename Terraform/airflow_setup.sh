@@ -61,6 +61,6 @@ sudo echo "MySQL_Con_Global=$MySQL_Con_Global" >> env
 sudo echo "S3_Con=$S3_Con" >> env
 sudo echo "local_host_name=$local_host_name" >> env
 
-# sudo docker compose --env-file env up --build -d
+sudo docker compose --env-file env up --build -d
 # If we go for the way to add the airflow connection in the env variable -> this will not be showned in the airflow UI
 # This is the solution
