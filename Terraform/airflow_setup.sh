@@ -16,7 +16,7 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt-get -y update
-sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin openjdk-8-jdk
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 sudo chmod 666 /var/run/docker.sock
 echo 'Clone git repo to EC2'
 cd /home/ubuntu && git clone "https://github.com/quocdeptraibodoi19/Climate_DE_Project.git" 
