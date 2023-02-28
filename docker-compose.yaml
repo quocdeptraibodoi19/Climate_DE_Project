@@ -3,15 +3,17 @@ x-airflow-common:
   &airflow-common
   build:
     context: ./Docker_Container_Airflow
+  network_mode: host
   environment:
     &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
-    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@localhost:5432/airflow
     AIRFLOW_CONN_SPARK_CON: $Spark_Con
     AIRFLOW_CONN_MYSQL_CON_CITY: $MySQL_Con_City
     AIRFLOW_CONN_MYSQL_CON_COUNTRY: $MySQL_Con_Country
     AIRFLOW_CONN_MYSQL_CON_GLOBAL: $MySQL_Con_Global
     AIRFLOW_CONN_S3_CON: $S3_Con
+    local_host_dns: $local_host_name
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
@@ -21,17 +23,17 @@ x-airflow-common:
       condition: service_healthy
 
 # The posgres database is used to store the metadata during the operation of the airflow webserver
+# Port is 5432 
 services:
   postgres:
     container_name: postgres-airflow
     image: postgres:13
+    network_mode: host
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "airflow" ]
       interval: 5s
       retries: 5
     restart: always
-    ports:
-      - "5432:5432"
     environment:
       - POSTGRES_USER=airflow
       - POSTGRES_PASSWORD=airflow
@@ -45,19 +47,18 @@ services:
       test:
         [
           "CMD-SHELL",
-          'airflow jobs check --job-type SchedulerJob --hostname "$${HOSTNAME}"'
+          'airflow jobs check --job-type SchedulerJob "$${local_host_dns}"'
         ]
       interval: 10s
       timeout: 10s
       retries: 5
     restart: always
 
+  # Port is 8081
   webserver:
     <<: *airflow-common
     container_name: airflow_webserver
-    command: webserver
-    ports:
-      - 8080:8080
+    command: webserver -p 8081
     environment:
       <<: *airflow-common-env
       _AIRFLOW_DB_UPGRADE: 'true'
@@ -70,7 +71,7 @@ services:
           "CMD",
           "curl",
           "--fail",
-          "http://localhost:8080/health"
+          "http://localhost:8081/health"
         ]
       interval: 10s
       timeout: 10s
