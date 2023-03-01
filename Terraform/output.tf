@@ -66,6 +66,10 @@ output "rds_password" {
 }
 
 output "redshift_cluster_endpoint" {
+  value = aws_redshift_cluster.climate_cluster.endpoint
+}
+
+output "redshift_cluster_dns" {
   value = aws_redshift_cluster.climate_cluster.dns_name
 }
 
