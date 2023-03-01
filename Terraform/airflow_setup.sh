@@ -52,7 +52,7 @@ S3_Con=s3://$aws_access_key:$aws_access_key?region_name=ap-northeast-1
 
 local_host_name=$(curl -s http://169.254.169.254/latest/meta-data/local-hostname)
 
-redshift_jdbc_connection = "jdbc:redshift://${redshift_cluster_endpoint}:${redshift_port}/${redshift_database}?user=${redshift_cluster_username}&password=${redshift_cluster_password}"
+redshift_jdbc_connection = "jdbc:redshift://${redshift_cluster_endpoint}?user=${redshift_cluster_username}&password=${redshift_cluster_password}"
 
 sudo touch env
 # This is just for checking

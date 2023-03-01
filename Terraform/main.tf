@@ -207,7 +207,7 @@ resource "aws_redshift_cluster" "climate_cluster" {
     cluster_identifier = "climate_cluster"
     database_name = "climate-temperature-db"
     master_username = "awsuser"
-    master_password = "12345678"
+    master_password = "quoc12345678"
     node_type = "dc2.large"
     cluster_type = "multi-node"
     number_of_nodes = 1
