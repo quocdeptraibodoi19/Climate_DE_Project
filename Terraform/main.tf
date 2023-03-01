@@ -213,6 +213,7 @@ resource "aws_redshift_cluster" "climate_cluster" {
     number_of_nodes = 1
     publicly_accessible = true
     port = 5439
+    skip_final_snapshot = true
     iam_roles = [ 
                     "arn:aws:iam::046931263575:role/service-role/AmazonRedshift-CommandsAccessRole-20230212T005741",
                     "arn:aws:iam::046931263575:role/aws-service-role/redshift.amazonaws.com/AWSServiceRoleForRedshift"

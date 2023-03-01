@@ -7,7 +7,7 @@ CREATE TABLE climate_etl_schema.city_detail_dimension_table (
     averagetemperature real ENCODE raw,
     averagetemperatureuncertainty real ENCODE raw,
     PRIMARY KEY (city_temperature_detail_id)
-)
+);
 
 CREATE TABLE climate_etl_schema.city_dimension_table (
     cityid integer ENCODE az64,
