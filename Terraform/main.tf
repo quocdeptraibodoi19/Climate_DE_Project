@@ -195,6 +195,13 @@ resource "aws_s3_bucket" "climate_bucket" {
     force_destroy = true
 }
 
+resource "aws_s3_object" "holistic_country_object" {
+    bucket = aws_s3_bucket.climate_bucket.bucket
+    key = "HolisticsCountryFormat_UTF8.csv"
+    source = "../Data_Sources/HolisticsCountryFormat_UTF8.csv"
+    content_type = "text/csv"
+}
+
 # Create the data sources (MySQL RDS Databases) 
 resource "aws_db_instance" "city_db" {
     allocated_storage = 20
