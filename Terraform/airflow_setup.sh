@@ -48,7 +48,7 @@ MySQL_Con_Global=mysql://$rds_username:$rds_password@$rds_global_hostname/"${rds
 aws_access_key="${aws_access_key}"
 aws_secret_key="${aws_secret_key}"
 s3_bucket_name="${s3_bucket_name}"
-S3_Con=s3://$aws_access_key:$aws_access_key?region_name=ap-northeast-1
+S3_Con=aws://$aws_access_key:$aws_access_key?region_name=ap-northeast-1
 
 local_host_name=$(curl -s http://169.254.169.254/latest/meta-data/local-hostname)
 

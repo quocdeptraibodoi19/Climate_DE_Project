@@ -379,6 +379,7 @@ resource "aws_instance" "airflow_machine" {
         aws_s3_bucket.climate_bucket,
         aws_db_instance.city_db,
         aws_db_instance.country_db,
-        aws_db_instance.global_db
+        aws_db_instance.global_db,
+        aws_redshift_cluster.climate_cluster,
     ]
 }

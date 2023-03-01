@@ -64,3 +64,16 @@ output "rds_password" {
   value = aws_db_instance.city_db.password
   sensitive = true
 }
+
+output "redshift_cluster_endpoint" {
+  value = aws_redshift_cluster.climate_cluster.dns_name
+}
+
+output "redshift_cluster_username" {
+  value = aws_redshift_cluster.climate_cluster.master_username
+}
+
+output "redshift_cluster_password" {
+  value = aws_redshift_cluster.climate_cluster.master_password
+  sensitive = true
+}
