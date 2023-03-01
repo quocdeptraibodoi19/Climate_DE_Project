@@ -197,9 +197,33 @@ resource "aws_s3_bucket" "climate_bucket" {
 
 resource "aws_s3_object" "holistic_country_object" {
     bucket = aws_s3_bucket.climate_bucket.bucket
-    key = "HolisticsCountryFormat_UTF8.csv"
+    key = "Holistics_Country_Format/HolisticsCountryFormat_UTF8.csv"
     source = "../Data_Sources/HolisticsCountryFormat_UTF8.csv"
     content_type = "text/csv"
+}
+
+# Create the redshift cluster and its database:
+resource "aws_redshift_cluster" "climate_cluster" {
+    cluster_identifier = "climate_cluster"
+    database_name = "climate-temperature-db"
+    master_username = "awsuser"
+    master_password = "12345678"
+    node_type = "dc2.large"
+    cluster_type = "multi-node"
+    number_of_nodes = 1
+    publicly_accessible = true
+    port = 5439
+    iam_roles = [ 
+                    "arn:aws:iam::046931263575:role/service-role/AmazonRedshift-CommandsAccessRole-20230212T005741",
+                    "arn:aws:iam::046931263575:role/aws-service-role/redshift.amazonaws.com/AWSServiceRoleForRedshift"
+                ]
+}
+
+resource "aws_redshiftdata_statement" "climate_redshift_setup" {
+    cluster_identifier = aws_redshift_cluster.climate_cluster.cluster_identifier
+    database = aws_redshift_cluster.climate_cluster.database_name
+    db_user = aws_redshift_cluster.climate_cluster.master_username
+    sql = file("aws_redshift_setup.sql")
 }
 
 # Create the data sources (MySQL RDS Databases) 
@@ -287,6 +311,11 @@ locals {
     aws_access_key = aws_iam_access_key.climate_access_key.id
     aws_secret_key = aws_iam_access_key.climate_access_key.secret
     s3_bucket_name = aws_s3_bucket.climate_bucket.bucket
+    redshift_cluster_username = aws_redshift_cluster.climate_cluster.master_username
+    redshift_cluster_password = aws_redshift_cluster.climate_cluster.master_password
+    redshift_cluster_endpoint = aws_redshift_cluster.climate_cluster.endpoint
+    redshift_port = aws_redshift_cluster.climate_cluster.port
+    redshift_database = aws_redshift_cluster.climate_cluster.database_name
 }
 
 # For the worker node
@@ -341,6 +370,11 @@ resource "aws_instance" "airflow_machine" {
         aws_access_key = local.aws_access_key,
         aws_secret_key = local.aws_secret_key,
         s3_bucket_name = local.s3_bucket_name,
+        redshift_cluster_endpoint = local.redshift_cluster_endpoint,
+        redshift_cluster_password = local.redshift_cluster_password,
+        redshift_cluster_username = local.redshift_cluster_username,
+        redshift_database = local.redshift_database,
+        redshift_port = local.redshift_port
     }))
     depends_on = [
         aws_instance.master_spark_machine,

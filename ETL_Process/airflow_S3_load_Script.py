@@ -16,7 +16,7 @@ spark_con = os.environ.get("AIRFLOW_CONN_SPARK_CON")
 default_args = {
     "owner": "Nguyen Dinh Quoc",
     "depends_on_past": False,
-    "start_date": datetime(year=2023, month=2, day=28),
+    "start_date": datetime.today(),
     "email": ["quocthogminhqtm@gmail.com"],
     "email_on_failure": True,
     "email_on_retry": True,

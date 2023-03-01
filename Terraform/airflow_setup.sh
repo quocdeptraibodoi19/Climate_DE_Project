@@ -52,6 +52,8 @@ S3_Con=s3://$aws_access_key:$aws_access_key?region_name=ap-northeast-1
 
 local_host_name=$(curl -s http://169.254.169.254/latest/meta-data/local-hostname)
 
+redshift_jdbc_connection = "jdbc:redshift://${redshift_cluster_endpoint}:${redshift_port}/${redshift_database}?user=${redshift_cluster_username}&password=${redshift_cluster_password}"
+
 sudo touch env
 # This is just for checking
 sudo echo "Spark_Con=$Spark_Con" >> env
@@ -59,6 +61,7 @@ sudo echo "MySQL_Con_City=$MySQL_Con_City" >> env
 sudo echo "MySQL_Con_Country=$MySQL_Con_Country" >> env
 sudo echo "MySQL_Con_Global=$MySQL_Con_Global" >> env
 sudo echo "S3_Con=$S3_Con" >> env
+sudo echo "Redshift_Con=$redshift_jdbc_connection" >> env
 sudo echo "local_host_name=$local_host_name" >> env
 
 sudo docker compose --env-file env up --build -d
