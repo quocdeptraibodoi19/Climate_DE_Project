@@ -98,7 +98,7 @@ You can try if you want to see how stupid it is :)
 Note that: if you configure the connection on the airflow UI, this will work perfectly
 however, if you specify the spark connection in environment variable,... this will be like this :)
 """
-
+conf = "--conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars /opt/airflow/aws-java-sdk-bundle-1.12.264.jar,/opt/airflow/hadoop-aws-3.3.1.jar --name arrow-spark"
 # complex_city_tab1_process_task = SparkSubmitOperator(
 #     task_id="Complex_city_citytable_data_process_task",
 #     dag=dag,
@@ -117,7 +117,7 @@ however, if you specify the spark connection in environment variable,... this wi
 #     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-bash_command = f"spark-submit --master {spark_con}  --conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars aws-java-sdk-bundle-1.12.264.jar,hadoop-aws-3.3.1.jar  --name arrow-spark /opt/airflow/dags/Spark_process_script.py city_table temperature-project-bucket1 db_temperature_by_city"
+bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py city_table temperature-project-bucket1 db_temperature_by_city"
 
 complex_city_tab1_process_task = BashOperator(
     task_id="Complex_city_citytable_data_process_task",
@@ -143,7 +143,7 @@ complex_city_tab1_process_task = BashOperator(
 #     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-bash_command = f"spark-submit --master {spark_con} --conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars aws-java-sdk-bundle-1.12.264.jar,hadoop-aws-3.3.1.jar --name arrow-spark /opt/airflow/dags/Spark_process_script.py temperature_table temperature-project-bucket1 db_temperature_by_city"
+bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py temperature_table temperature-project-bucket1 db_temperature_by_city"
 
 complex_city_tab2_process_task = BashOperator(
     task_id="Complex_city_temptable_process_task", dag=dag, bash_command=bash_command
@@ -167,7 +167,7 @@ complex_city_tab2_process_task = BashOperator(
 #     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-bash_command = f"spark-submit --master {spark_con} --conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars aws-java-sdk-bundle-1.12.264.jar,hadoop-aws-3.3.1.jar --name arrow-spark /opt/airflow/dags/Spark_process_script.py temperature_country_table temperature-project-bucket1 db_temperature_by_country"
+bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py temperature_country_table temperature-project-bucket1 db_temperature_by_country"
 
 complex_country_process_task = BashOperator(
     task_id="Complex_country_data_process_task", dag=dag, bash_command=bash_command
@@ -192,7 +192,7 @@ complex_country_process_task = BashOperator(
 #     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-bash_command = f"spark-submit --master {spark_con} --conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars aws-java-sdk-bundle-1.12.264.jar,hadoop-aws-3.3.1.jar --name arrow-spark /opt/airflow/dags/Spark_process_script.py global_temperature_table temperature-project-bucket1 db_temperature_global"
+bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py global_temperature_table temperature-project-bucket1 db_temperature_global"
 
 complex_global_process_task = BashOperator(
     task_id="Complex_global_data_process_task", dag=dag, bash_command=bash_command
@@ -211,7 +211,7 @@ complex_global_process_task = BashOperator(
 #     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
 # )
 
-bash_command = f"spark-submit --master {spark_con} --conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars aws-java-sdk-bundle-1.12.264.jar,hadoop-aws-3.3.1.jar --name arrow-spark ./Spark_integrate_script.py"
+bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_integrate_script.py"
 
 complex_data_transform_task = BashOperator(
     task_id="Complex_data_transform_process_task", dag=dag, bash_command=bash_command
