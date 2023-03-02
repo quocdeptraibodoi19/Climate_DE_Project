@@ -68,7 +68,7 @@ If you want to destroy the infrastructure, use the `make down` command.
 
 ## Data Sources’ schemas:
 
-There are 3 MySQL databases stored in AWS RDD. Those schemas are shown below:
+There are 3 MySQL databases stored in AWS RDS. Those schemas are shown below:
 
 ![Untitled](Visualization/Untitled%201.png)
 
