@@ -33,7 +33,7 @@ The data sources are CSV files that are initially stored locally. We then transf
 We create an Amazon Redshift cluster with a single node to store the processed data.
 
 #### BI tools:
-we have incorporated BI tools, such as Holistics, to visualize and analyze data. Holistics provides a free plan for 13 days, after which there is a charge to continue using it. Alternatively, users can use any other free BI tools for data visualization.
+We have incorporated BI tools, such as Holistics, to visualize and analyze data. Holistics provides a free plan for 13 days, after which there is a charge to continue using it. Alternatively, users can use any other free BI tools for data visualization.
 
 ## Project Initialization and Setup Guide
 
