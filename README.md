@@ -2,53 +2,59 @@
 
 ## **Problem:**
 
-Currently climate problem is emerging as a super serious issue affecting every countries from developed countries to developing countries.
+Currently, the climate problem is emerging as a super serious issue affecting every country from developed countries to developing countries.
 
-In this project, I will investigate into this problem in terms of the Global Temperature. I want to know that:
+In this project, I will investigate this problem in terms of global temperature. I want to know:
 
-- What are the top/major cities countries having the highest average temperature over the period (top 5)?
-- What are periods in the history being a peak in terms of temperature?
-- what is the tendency of the temperature globally?
-
-The above questions are simulated questions of a particular analysis process. 
+Which are the top/major cities or countries with the highest average temperature over a period (top 5)?
+Which periods in history had a peak in terms of temperature?
+What is the global temperature trend?
+The above questions are simulated questions of a specific analysis process.
 
 ## The architecture for the application:
 
 ![Untitled](Visualization/Untitled.png)
 
-There are 2 layers in the Staging Area implemented with S3: 
+The Staging Area has two layers implemented with S3:
 
-- Data Zone (Landing Zone): Used to store raw data and preprocess data (add the date column). This layer will incrementally load data from sources according to a specific schedule. This layer acts as a centralized data repository.
-- Processing Stage: Used to store the processed data prior to moving it into a data warehouse.
+Data Zone (Landing Zone): This layer is used to store raw data and preprocess data (such as adding a date column). The Data Zone incrementally loads data from sources according to a specific schedule. This layer acts as a centralized data repository.
 
-### Why?
+Processing Stage: This layer is used to store processed data before moving it into a data warehouse.
 
-The reason why having the staging area in the architecture?
-
-Having staging area in the data pipeline brings back many benefits:
-
-- Playing as a centralized data repository storing raw data from many sources. which makes it easier to manage and monitor the data for the system. Additionally, since sources stem from many other different systems (API, Web Scrapping, DBMS, OLTP,…), having something as a common interface will be easier to implement downstream tasks.
-- Helping the make the system more consistent and reliable since we do not rely on the external sources, which limits affecting downstream tasks.
-- Having staging area in the system can help us easily backfill the data (in the event that we wrongly process data and we want to fix that). The staging area can help us with that
-- RDS or external sources just record the current state of the data. Having the staging area in the system can act like the log system helping us to trace back the logic error in the processing tasks for example. Without staging area, we can easily lost the data since we don’t have any historical snapshot of data.
-
-⇒ Those are the reasons why we use staging area in the data pipeline.
-
-The reason why we decouple the staging area into 2 parts: data zone and processing zone?
-
-That we decouple the staging area into 2 parts can help to better the managing and monitoring process of data, bring back the high possibility to troubleshoot the errors, make it much easier to track the data lineage to see whether or not data is appropriately processed and if not, we can easily trace back the root of the cause and fix that. That we decouple the staging area is a fine-grained approach to have a higher control over our data and make it much easier to troubleshoot the errors when they arise, which ends up a better quality of the data. 
-
-The trade-off of this approach is that:
-
-- It requires much more infrastructure for the implementation and deployment.
-- It requires much more compute power
-- It increases the complexity of the system
-- That data have to move to different places can downgrade the performance of the system, and increase the risk of errors, security issues,…
-
-### Setting up and Configuration:
-What I've done so far is to create 3 AWS EC2 machines. The first one is used to host the apache airflow application which is used to orchestrate the whole data pipeline. The apache airflow uses sequential executors to handle tasks. The others play a roles respectively as a master node and a worker node in the Spark Cluster. The Spark Cluster is deployed in a standalone mode.
+What I've done so far is to create 3 AWS EC2 machines. The first one is used to house a docker containers setting up apache airflow application consisting of a postgres SQL to store metadata, an airflow scheduler and an airflow webserver. The apache airflow uses local executors to handle tasks. The others play a roles respectively as a master node and a worker node in the Spark Cluster. The Spark Cluster is deployed in a standalone mode.
 About the data sources, first of all, they are just csv files. Then from the local machine, I detach them and then move them into 3 AWS RDS MySQL Databases.
 About the AWS RedShift, I create a cluster of node node (free tier). This node store our processed data. 
+
+## Project Initialization and Setup Guide
+
+This guide outlines the necessary steps to initialize and set up the project on AWS.
+
+### Prerequisites
+
+- Github account
+- Git installed
+- AWS account
+- AWS CLI installed and configured
+- A development environment (such as Ubuntu or another Linux-based OS) installed on your system. If you are using Windows, please ensure that you have access to a Linux-based terminal such as Git Bash or Windows Subsystem for Linux (WSL).
+
+### Installation
+
+1. Clone the project from Github to your local machine.
+2. Use make init command to download and install the required packages to initialize the project.
+3. Use make up command to set up the infrastructure on AWS. Note that this process may take some time, so please be patient.
+4. Use make init-resource command to populate the RDS databases with raw data to simulate the data sources. Please note that this step requires all RDS databases to be fully created before execution. If you encounter any errors during this step, wait for a few minutes and try again.
+
+### Data Pipeline Operations
+
+Once you have completed the above steps, you can now operate the data pipeline.
+
+1. Access the Airflow website using the public IP or public DNS of the "airflow machine" with port 8081. Alternatively, you can map it to localhost using the command make cloud-airflow. The port will now be 8082, and you can access it via localhost:8082.
+2. To inspect the Spark cluster, use the URL generated from the combination of the public DNS or public IP of the "master airflow machine" with port 8080. You can also use the command make cloud-spark to make it easier. The port will now be 8083.
+3. Run your data pipeline.
+
+### Destruction
+
+If you want to destroy the infrastructure, use the make down command.
 
 ## Data Sources’ schemas:
 
@@ -100,6 +106,3 @@ In  a more detail view, this is the chart presenting the detail temperature valu
 ![chart (5).png](Visualization/chart_(5).png)
 
 This is the area chart caring about the “Land and Ocean Average Temperature” and “Land Average Temperature” on the global basis. Both of them show the tendency to increase.
-
-## Future Work:
-What I have done so far is too manual and unprofessional. Thus, this project is not so similar to what is in the reality. I want to use Terraform to automate the process of setting up the infrastructure and use Docker for the ease of local developement and setting up. I also want to apply CI/CD in my project in the future.
