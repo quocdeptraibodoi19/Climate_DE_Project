@@ -37,7 +37,7 @@ We have incorporated BI tools, such as Holistics, to visualize and analyze data.
 
 ## Project Initialization and Setup Guide
 
-This guide outlines the necessary steps to initialize and set up the project. This project uses **Terraform** as an IAC (Infrastrucure-As-Code) platform to automate the process of setting up the infrastructures on AWS.
+This guide outlines the necessary steps to initialize and set up the project. This project uses [**Terraform**](https://www.terraform.io/) as an IAC (Infrastrucure-As-Code) platform to automate the process of setting up the infrastructures on AWS.
 
 ### Prerequisites
 
