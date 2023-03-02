@@ -183,9 +183,14 @@ resource "aws_iam_user_policy_attachment" "rds" {
     policy_arn = "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
 }
 
-resource "aws_iam_user_policy_attachment" "s3" {
+resource "aws_iam_user_policy_attachment" "redshift" {
     user = aws_iam_user.climate_temperature_user.name
     policy_arn = "arn:aws:iam::aws:policy/AmazonRedshiftFullAccess"
+}
+
+resource "aws_iam_user_policy_attachment" "s3" {
+    user = aws_iam_user.climate_temperature_user.name
+    policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
 # Create the s3 bucket - a storage region

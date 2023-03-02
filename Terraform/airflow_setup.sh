@@ -16,7 +16,7 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 sudo apt-get -y update
-sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin gridsite-clients
 sudo chmod 666 /var/run/docker.sock
 echo 'Clone git repo to EC2'
 cd /home/ubuntu && git clone "https://github.com/quocdeptraibodoi19/Climate_DE_Project.git" 
@@ -46,7 +46,7 @@ rds_global_hostname="${rds_global_hostname}"
 MySQL_Con_Global=mysql://$rds_username:$rds_password@$rds_global_hostname/"${rds_global_schema}"
 
 aws_access_key="${aws_access_key}"
-aws_secret_key="${aws_secret_key}"
+aws_secret_key="$(urlencode "${aws_secret_key}")"
 s3_bucket_name="${s3_bucket_name}"
 S3_Con=s3://$aws_access_key:$aws_secret_key?region_name=ap-northeast-1
 AWS_Con=aws://$aws_access_key:$aws_secret_key@?region_name=ap-northeast-1
