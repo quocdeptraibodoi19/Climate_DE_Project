@@ -16,11 +16,6 @@ The above questions are simulated questions of a specific analysis process.
 
 ![Untitled](Visualization/Untitled.png)
 
-The Staging Area has two layers implemented with S3:
-
-- Data Zone (Landing Zone): This layer is used to store raw data and preprocess data (such as adding a date column). The Data Zone incrementally loads data from sources according to a specific schedule. This layer acts as a centralized data repository.
-- Processing Stage: This layer is used to store processed data before moving it into a data warehouse.
-
 ### Infrastructure Setup
 
 To support our data pipeline, we have created a robust infrastructure using Amazon Web Services (AWS). The infrastructure of the data pipeline consists of:
