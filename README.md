@@ -23,7 +23,7 @@ The Staging Area has two layers implemented with S3:
 
 ### Infrastructure Setup
 
-To support our data pipeline, we have created a robust infrastructure using Amazon Web Services (AWS). The infrastructure consists of:
+To support our data pipeline, we have created a robust infrastructure using Amazon Web Services (AWS). The infrastructure of the data pipeline consists of:
 
 - Three Amazon Elastic Compute Cloud (EC2) instances:
   - The first instance hosts a Docker container with an Apache Airflow application, which includes a PostgreSQL database for metadata storage, an Airflow scheduler, and an Airflow webserver.
@@ -31,11 +31,14 @@ To support our data pipeline, we have created a robust infrastructure using Amaz
 - Amazon S3 Bucket:
   - We have set up an S3 bucket to serve as a storage zone for our data pipeline. The Data Zone (Landing Zone) layer of the staging area uses this bucket to store raw data and preprocess data. The Processing Zone layer also uses this bucket to store the processed data from Spark before moving it to the data warehouse.
 
-### Data Sources
+#### Data Sources
 The data sources are CSV files that are initially stored locally. We then transfer these files to three Amazon Relational Database Service (RDS) MySQL databases.
 
-### Data Warehouse
+#### Data Warehouse
 We create an Amazon Redshift cluster with a single node to store the processed data.
+
+#### BI tools:
+we have incorporated BI tools, such as Holistics, to visualize and analyze data. Holistics provides a free plan for 13 days, after which there is a charge to continue using it. Alternatively, users can use any other free BI tools for data visualization.
 
 ## Project Initialization and Setup Guide
 
