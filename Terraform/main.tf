@@ -315,6 +315,7 @@ locals {
     redshift_cluster_username = aws_redshift_cluster.climate_cluster.master_username
     redshift_cluster_password = aws_redshift_cluster.climate_cluster.master_password
     redshift_cluster_endpoint = aws_redshift_cluster.climate_cluster.endpoint
+    redshift_cluster_database = aws_redshift_cluster.climate_cluster.database_name
 }
 
 # For the worker node
@@ -372,6 +373,7 @@ resource "aws_instance" "airflow_machine" {
         redshift_cluster_endpoint = local.redshift_cluster_endpoint,
         redshift_cluster_password = local.redshift_cluster_password,
         redshift_cluster_username = local.redshift_cluster_username,
+        redshift_cluster_database = local.redshift_cluster_database,
     }))
     depends_on = [
         aws_instance.master_spark_machine,

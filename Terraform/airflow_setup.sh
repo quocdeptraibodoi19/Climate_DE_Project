@@ -48,14 +48,16 @@ MySQL_Con_Global=mysql://$rds_username:$rds_password@$rds_global_hostname/"${rds
 aws_access_key="${aws_access_key}"
 aws_secret_key="${aws_secret_key}"
 s3_bucket_name="${s3_bucket_name}"
-S3_Con=aws://$aws_access_key:$aws_access_key?region_name=ap-northeast-1
+S3_Con=s3://$aws_access_key:$aws_secret_key?region_name=ap-northeast-1
+AWS_Con=aws://$aws_access_key:$aws_secret_key@?region_name=ap-northeast-1
 
 local_host_name=$(curl -s http://169.254.169.254/latest/meta-data/local-hostname)
 
 redshift_cluster_endpoint="${redshift_cluster_endpoint}"
 redshift_cluster_username="${redshift_cluster_username}"
 redshift_cluster_password="${redshift_cluster_password}"
-redshift_jdbc_connection="jdbc:redshift://$redshift_cluster_endpoint?user=$redshift_cluster_username&password=$redshift_cluster_password"
+redshift_cluster_database="${redshift_cluster_database}"
+redshift_jdbc_connection="postgres://$redshift_cluster_username:$redshift_cluster_password@$redshift_cluster_endpoint/$redshift_cluster_database"
 
 sudo touch env
 # This is just for checking
@@ -64,6 +66,7 @@ sudo echo "MySQL_Con_City=$MySQL_Con_City" >> env
 sudo echo "MySQL_Con_Country=$MySQL_Con_Country" >> env
 sudo echo "MySQL_Con_Global=$MySQL_Con_Global" >> env
 sudo echo "S3_Con=$S3_Con" >> env
+sudo echo "AWS_Con=$AWS_Con" >> env
 sudo echo "Redshift_Con=$redshift_jdbc_connection" >> env
 sudo echo "local_host_name=$local_host_name" >> env
 
