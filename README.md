@@ -4,7 +4,7 @@
 
 Currently, the climate problem is emerging as a super serious issue affecting every country from developed countries to developing countries.
 
-In this project, I will investigate this problem in terms of global temperature. I want to know:
+In this project, I will investigate this problem regarding the global temperature. I want to know:
 
 1. Which are the top/major cities or countries with the highest average temperature over a period (top 5)?
 2. Which periods in history had a peak in terms of temperature?
@@ -41,7 +41,6 @@ This guide outlines the necessary steps to initialize and set up the project. Th
 
 ### Prerequisites
 
-- Github account
 - Git installed
 - AWS account
 - AWS CLI installed and configured
