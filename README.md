@@ -57,7 +57,7 @@ This guide outlines the necessary steps to initialize and set up the project. Th
 
 Once you have completed the above steps, you can now operate the data pipeline.
 
-1. Access the Airflow website using the public IP or public DNS of the "airflow machine" with port 8081. Alternatively, you can map it to localhost using the command `make cloud-airflow`. The port will now be 8082, and you can access it via localhost:8082.
+1. Access the Airflow website using the public IP or public DNS of the "airflow machine" with port 8081. Alternatively, you can map it to localhost using the command `make cloud-airflow`. The port will now be 8082, and you can access it via localhost:8082. Note that it can take some time for the docker containers to be built and used so if you can not access the Airflow website, you can wait a minute and try again. You can inspect what is going on by inspecting the docker containers via the command `docker ps` inside the Airlow EC2 Machine accessed with the command `make ssh-airflow`. 
 2. To inspect the Spark cluster, use the URL generated from the combination of the public DNS or public IP of the "master airflow machine" with port 8080. You can also use the command `make cloud-spark` to make it easier. The port will now be 8083.
 3. Run your data pipeline.
 
@@ -67,7 +67,7 @@ If you want to destroy the infrastructure, use the `make down` command.
 
 ## Data Sources’ schemas:
 
-There are 3 MySQL databases stored in AWS RDS. Those schemas are shown below:
+There are 3 MySQL databases registered in AWS RDS. Those schemas are shown below:
 
 ![Untitled](Visualization/Untitled%201.png)
 
