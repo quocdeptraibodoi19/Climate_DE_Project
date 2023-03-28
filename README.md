@@ -45,13 +45,15 @@ This guide outlines the necessary steps to initialize and set up the project. Th
 - AWS account
 - AWS CLI installed and configured
 - A development environment (such as Ubuntu or another Linux-based OS) installed on your system. If you are using Windows, please ensure that you have access to a Linux-based terminal such as Git Bash or Windows Subsystem for Linux (WSL).
+- Python3 installed
+- Terraform installed
 
 ### Installation
 
 1. Clone the project from Github to your local machine.
 2. Use `make init` command to download and install the required packages to initialize the project.
 3. Use `make up` command to set up the infrastructure on AWS. Note that this process may take some time, so please be patient.
-4. Use `make init-resource` command to populate the RDS databases with raw data to simulate the data sources. Please note that this step requires all RDS databases to be fully created before execution. If you encounter any errors during this step, wait for a few minutes and try again.
+4. Use `make init-datasource` command to populate the RDS databases with raw data to simulate the data sources. Please note that this step requires all RDS databases to be fully created before execution. If you encounter any errors during this step, wait for a few minutes and try again.
 
 ### Data Pipeline Operations
 
