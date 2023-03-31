@@ -20,7 +20,7 @@ default_args = {
     "email": ["quocthogminhqtm@gmail.com"],
     "email_on_failure": True,
     "email_on_retry": True,
-    "retries": 0,
+    "retries": 3,
     "retry_delay": timedelta(minutes=1),
 }
 
@@ -31,26 +31,6 @@ dag = DAG(
     catchup=False,
 )
 
-"""
-# This is a simple way to do so
-country_load_task = PythonOperator(
-    task_id = "country_data_load_task",
-    dag=dag,
-    python_callable= load_country_temperature
-)
-city_load_task = PythonOperator(
-    task_id = "city_data_load_task",
-    dag=dag,
-    python_callable= load_city_temperature
-)
-global_load_task = PythonOperator(
-    task_id = "global_data_load_task", 
-    dag=dag,
-    python_callable= load_global_temperature
-)
-"""
-
-# This is a more complicated way to do so
 complex_city_tab1_load_task = IncrementalLoadOperator(
     task_id="Complex_city_citytable_data_load_task",
     dag=dag,
@@ -98,24 +78,7 @@ You can try if you want to see how stupid it is :)
 Note that: if you configure the connection on the airflow UI, this will work perfectly
 however, if you specify the spark connection in environment variable,... this will be like this :)
 """
-conf = "--conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --jars /opt/airflow/aws-java-sdk-bundle-1.12.264.jar,/opt/airflow/hadoop-aws-3.3.1.jar --name arrow-spark"
-# complex_city_tab1_process_task = SparkSubmitOperator(
-#     task_id="Complex_city_citytable_data_process_task",
-#     dag=dag,
-#     conn_id="spark_con",
-#     application="./Spark_process_script.py",
-#     application_args=[
-#         "city_table",
-#         "temperature-project-bucket1",
-#         "db_temperature_by_city",
-#     ],
-#     conf={
-#         "spark.executor.cores": 2,
-#         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000,
-#     },
-#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
-# )
+conf = "--conf spark.executor.cores=2 --conf spark.executor.memory=1g --conf spark.network.timeout=10000000 --repositories https://repo1.maven.org/maven2/ --packages com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1 --name arrow-spark"
 
 bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py city_table temperature-project-bucket1 db_temperature_by_city"
 
@@ -125,47 +88,11 @@ complex_city_tab1_process_task = BashOperator(
     bash_command=bash_command,
 )
 
-# complex_city_tab2_process_task = SparkSubmitOperator(
-#     task_id="Complex_city_temptable_process_task",
-#     dag=dag,
-#     conn_id="spark_con",
-#     application="./Spark_process_script.py",
-#     application_args=[
-#         "temperature_table",
-#         "temperature-project-bucket1",
-#         "db_temperature_by_city",
-#     ],
-#     conf={
-#         "spark.executor.cores": 2,
-#         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000,
-#     },
-#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
-# )
-
 bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py temperature_table temperature-project-bucket1 db_temperature_by_city"
 
 complex_city_tab2_process_task = BashOperator(
     task_id="Complex_city_temptable_process_task", dag=dag, bash_command=bash_command
 )
-
-# complex_country_process_task = SparkSubmitOperator(
-#     task_id="Complex_country_data_process_task",
-#     dag=dag,
-#     conn_id="spark_con",
-#     application="./Spark_process_script.py",
-#     application_args=[
-#         "temperature_country_table",
-#         "temperature-project-bucket1",
-#         "db_temperature_by_country",
-#     ],
-#     conf={
-#         "spark.executor.cores": 2,
-#         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000,
-#     },
-#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
-# )
 
 bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py temperature_country_table temperature-project-bucket1 db_temperature_by_country"
 
@@ -173,43 +100,11 @@ complex_country_process_task = BashOperator(
     task_id="Complex_country_data_process_task", dag=dag, bash_command=bash_command
 )
 
-
-# complex_global_process_task = SparkSubmitOperator(
-#     task_id="Complex_global_data_process_task",
-#     dag=dag,
-#     conn_id="spark_con",
-#     application="./Spark_process_script.py",
-#     application_args=[
-#         "global_temperature_table",
-#         "temperature-project-bucket1",
-#         "db_temperature_global",
-#     ],
-#     conf={
-#         "spark.executor.cores": 2,
-#         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000,
-#     },
-#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
-# )
-
 bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_process_script.py global_temperature_table temperature-project-bucket1 db_temperature_global"
 
 complex_global_process_task = BashOperator(
     task_id="Complex_global_data_process_task", dag=dag, bash_command=bash_command
 )
-
-# complex_data_transform_task = SparkSubmitOperator(
-#     task_id="Complex_data_transform_process_task",
-#     dag=dag,
-#     conn_id="spark_con",
-#     application="./Spark_integrate_script.py",
-#     conf={
-#         "spark.executor.cores": 2,
-#         "spark.executor.memory": "1g",
-#         "spark.network.timeout": 10000000,
-#     },
-#     packages="com.amazonaws:aws-java-sdk-bundle:1.12.264,org.apache.hadoop:hadoop-aws:3.3.1",
-# )
 
 bash_command = f"spark-submit --master {spark_con} {conf} /opt/airflow/dags/Spark_integrate_script.py"
 
